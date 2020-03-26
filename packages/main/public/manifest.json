@@ -1,0 +1,16 @@
+{
+  "name": "zenzero",
+  "version": "1.0.0",
+  "manifest_version": 2,
+  "default_locale": "en",
+  "description": "A plain text description",
+  "icons": {},
+  "browser_action": {
+    "default_popup": "popup/index.html"
+  },
+  "permissions": [
+    "tabs",
+    "storage"
+  ],
+  "author": "Luca Campli"
+}
