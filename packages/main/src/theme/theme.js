@@ -9,11 +9,12 @@ const baseButton = {
 export const theme = {
   ...preset,
   breakpoints: ["480px", "715px", "1024px"],
-  fontSizes: [16, 18, 20, 22, 32],
+  fontSizes: [16, 18, 20, 22, 32, 48],
   colors: {
-    text: "#cccccc",
-    primary: "#aaaaaa",
-    background: "#333333",
+    text: "hsl(230, 93%, 97%)",
+    primary: "hsl(230, 93%, 63%)",
+    secondary: "hsl(137, 76%, 64%)",
+    background: "#FDB64C",
     gray: "#777777",
     darkgray: "#999999",
     headerBg: "#535353",
@@ -38,7 +39,9 @@ export const theme = {
   shadows: {
     small: "0 0 4px rgba(0, 0, 0, .125)",
     large: "0 0 24px rgba(0, 0, 0, .125)",
-    image: "2px 2px 4px rgba(34, 34, 34, 0.7)",
+    card: "2px 2px 4px rgba(34, 34, 34, 0.7)",
+    neonBlue: "2px 2px 4px hsl(230,93%,49%)",
+    neonBlueHover: "3px 3px 6px 2px hsl(230,93%,49%)",
   },
   variants: {
     ...preset.variants,
@@ -52,42 +55,12 @@ export const theme = {
   },
   text: {
     ...preset.text,
-    bookName: {
-      fontWeight: "bold",
-      fontSize: 3,
-      lineHeight: "26px",
-      color: "text",
-    },
-    ownedBy: {
-      fontWeight: 500,
-      fontSize: 0,
-      lineHeight: "text",
-      color: "darkgray",
-    },
-    username: {
-      fontWeight: "bold",
-      fontSize: 0,
-      lineHeight: "text",
-      color: "text",
-    },
-    groupTitle: {
-      fontSize: 4,
-      fontWeight: 200,
-      lineHeight: "37px",
+    listTitle: {
       color: "primary",
-      mb: 4,
-    },
-    detailLabel: {
-      fontWeight: 500,
-      fontSize: "16px",
-      lineHeight: "text",
-      color: "darkgray",
-      textTransform: "capitalize",
-    },
-    detailValue: {
-      fontWeight: "bold",
-      fontSize: "16px",
-      lineHeight: "text",
+      fontWeight: "normal",
+      fontSize: [1],
+      my: 1,
+      marginLeft: 1,
     },
   },
   buttons: {

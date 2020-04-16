@@ -1,11 +1,12 @@
 import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import createSagaMiddleware from "redux-saga";
 import { all } from "redux-saga/effects";
-import { tabsReducer, windowsReducer } from "features/tabsSession";
+import { tabsReducer, windowsReducer, dragReducer } from "features/tabsSession";
+import { watchStateAndActions } from "features/tabsSession/sagas";
 
 export const setupStore = ({ reducers = {}, preloadedState } = {}) => {
   function* rootSaga() {
-    yield all([]);
+    yield all([watchStateAndActions()]);
   }
 
   const sagaMiddleware = createSagaMiddleware();
@@ -13,6 +14,7 @@ export const setupStore = ({ reducers = {}, preloadedState } = {}) => {
   const mainReducer = combineReducers({
     windows: windowsReducer,
     tabs: tabsReducer,
+    drag: dragReducer,
     ...reducers,
   });
 

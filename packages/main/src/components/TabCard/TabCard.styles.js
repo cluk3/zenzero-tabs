@@ -1,13 +1,21 @@
 import styled from "styled-components";
 
 export const TabItem = styled.div`
+  overflow: hidden;
   display: grid;
   grid-template-columns: 3rem auto;
-  box-shadow: 1px 1px 0px 0px rgba(94, 93, 102, 0.08),
-    2px 2px 3px 0px rgba(94, 93, 102, 0.1);
+  box-shadow: ${({ theme }) => theme.shadows.neonBlue};
+  border-radius: 3px;
   height: 4rem;
   cursor: pointer;
   position: relative;
+  background-color: ${({ theme, isDragging }) =>
+    !isDragging ? theme.colors.primary : "pink"};
+  color: hsl(230, 93%, 98%);
+
+  :hover {
+    box-shadow: ${({ theme }) => theme.shadows.neonBlueHover};
+  }
 `;
 
 export const CloseButton = styled.div`
@@ -16,7 +24,8 @@ export const CloseButton = styled.div`
   right: 1rem;
   height: 1rem;
   width: 1rem;
-  background-color: red;
+  background-color: ${({ theme }) => theme.colors.background};
+  color: ${({ theme }) => theme.colors.text};
   border-radius: 50%;
 `;
 

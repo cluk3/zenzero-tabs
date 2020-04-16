@@ -1,4 +1,5 @@
 import browser from "webextension-polyfill";
+import { memoizedThrottle } from "utils";
 
 export const closeTab = (tabId) => {
   return browser.tabs.remove(tabId);
@@ -9,8 +10,13 @@ export const focusTab = async ({ id: tabId, windowId }) => {
   await browser.windows.update(windowId, { focused: true });
 };
 
-export const moveTab = (tab, window) =>
-  browser.tabs.move(tab.id, { windowId: window.id, index: -1 });
+export const moveTab = memoizedThrottle(
+  (tabId, windowId, index = -1) => {
+    browser.tabs.move(tabId, { windowId, index });
+  },
+  500,
+  { leading: true, trailing: false }
+);
 
 export const closeWindow = () => {};
 export const focusWindow = () => {};
