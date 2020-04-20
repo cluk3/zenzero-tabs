@@ -20,3 +20,6 @@ export const moveTab = memoizedThrottle(
 
 export const closeWindow = () => {};
 export const focusWindow = () => {};
+
+export const getWindows = () =>
+  browser.windows.getAll({ populate: true, windowTypes: ["normal"] });

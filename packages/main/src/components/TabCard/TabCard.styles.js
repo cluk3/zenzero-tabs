@@ -1,33 +1,50 @@
 import styled from "styled-components";
+import React from "react";
+import { Button, Card } from "rebass/styled-components";
 
-export const TabItem = styled.div`
-  overflow: hidden;
-  display: grid;
-  grid-template-columns: 3rem auto;
-  box-shadow: ${({ theme }) => theme.shadows.neonBlue};
-  border-radius: 3px;
-  height: 4rem;
-  cursor: pointer;
-  position: relative;
-  background-color: ${({ theme, isDragging }) =>
-    !isDragging ? theme.colors.primary : "pink"};
-  color: hsl(230, 93%, 98%);
+export const TabItem = ({ isDragging, isOver, ...props }) => (
+  <Card
+    sx={{
+      overflow: "hidden",
+      display: "grid",
+      gridTemplateColumns: "3rem auto",
+      boxShadow: "card",
+      borderRadius: "3px",
+      height: "6rem",
+      cursor: "pointer",
+      position: "relative",
+      opacity: isDragging ? 0.1 : 1,
+      backgroundColor: isOver ? "pink" : "primary",
+      color: "text",
+      transition: "all 0.2s ease-out",
+      mb: 2,
+      contain: "content",
+      willChange: "transform",
 
-  :hover {
-    box-shadow: ${({ theme }) => theme.shadows.neonBlueHover};
-  }
-`;
+      ":hover": {
+        boxShadow: "cardHover",
+        transform: "translate3d(1px, 1px, 0)",
+      },
+    }}
+    {...props}
+  />
+);
 
-export const CloseButton = styled.div`
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  height: 1rem;
-  width: 1rem;
-  background-color: ${({ theme }) => theme.colors.background};
-  color: ${({ theme }) => theme.colors.text};
-  border-radius: 50%;
-`;
+export const CloseButton = (props) => (
+  <Button
+    sx={{
+      position: "absolute",
+      top: "1rem",
+      right: "1rem",
+      height: "1rem",
+      width: "1rem",
+      backgroundColor: "background",
+      color: "text",
+      borderRadius: "50%",
+    }}
+    {...props}
+  ></Button>
+);
 
 export const TabFavIcon = styled.img`
   width: 2rem;

@@ -1,20 +1,25 @@
 import React, { useEffect } from "react";
+
 import { Header } from "./layout/Header";
+import { Main } from "./layout/Main";
+import { Sidebar } from "./layout/Sidebar";
 import { TabsView } from "./components/TabsView";
 import { GlobalStyle } from "./GlobalStyle";
-import browser from "webextension-polyfill";
+import { Flex } from "rebass/styled-components";
+import { Directory } from "components/Directory";
+
 import { DndProvider } from "react-dnd";
 import Backend from "react-dnd-html5-backend";
-import { useDispatch } from "react-redux";
-import { initSync } from "api/sync";
 
+import { useDispatch, useSelector } from "react-redux";
 import { addWindows } from "features/tabsSession";
-
-const getWindows = () =>
-  browser.windows.getAll({ populate: true, windowTypes: ["normal"] });
+import { initSync } from "api/sync";
+import { getWindows } from "api/browser";
 
 function App() {
   const dispatch = useDispatch();
+  const isSidebarOpen = useSelector((state) => state.ui.sidebar.isOpen);
+
   useEffect(() => {
     getWindows().then((windows) => {
       dispatch(addWindows(windows));
@@ -25,11 +30,17 @@ function App() {
   return (
     <div className="App">
       <GlobalStyle />
-      <Header />
+      <Header isSidebarOpen={isSidebarOpen} />
+      {/* <Button variant='active' /> */}
       <DndProvider backend={Backend}>
-        <div>
+        <Sidebar isSidebarOpen={isSidebarOpen}>
+          <Flex p={2}>
+            <Directory />
+          </Flex>
+        </Sidebar>
+        <Main isSidebarOpen={isSidebarOpen}>
           <TabsView />
-        </div>
+        </Main>
       </DndProvider>
     </div>
   );

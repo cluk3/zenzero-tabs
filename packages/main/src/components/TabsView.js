@@ -1,20 +1,14 @@
 import React from "react";
 import { WindowItem } from "components/WindowItem";
-import sort from "ramda/src/sort";
+import { windowsSelector } from "features/tabsSession";
 import { useSelector } from "react-redux";
-import { createSelector } from "@reduxjs/toolkit";
 
-const activeWindowFirst = sort((window) => (window.focused ? -1 : 1));
-
-const getWindows = createSelector(
-  (state) => state.windows,
-  ({ allIds, byId }) => activeWindowFirst(allIds.map((id) => byId[id]))
-);
+import { Flex } from "rebass/styled-components";
 
 export const TabsView = () => {
-  const windows = useSelector(getWindows);
+  const windows = useSelector(windowsSelector);
   return (
-    <div>
+    <Flex sx={{ flexGrow: 1, flexShrink: 0 }}>
       {windows.length ? (
         windows.map((window) => (
           <WindowItem
@@ -26,6 +20,6 @@ export const TabsView = () => {
       ) : (
         <h2>Wait for it...</h2>
       )}
-    </div>
+    </Flex>
   );
 };

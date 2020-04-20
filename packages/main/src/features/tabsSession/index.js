@@ -13,3 +13,4 @@ export {
 export { startDrag, endDrag, dragReducer } from "./drag";
 export { tabsReducer, windowsReducer };
 export const { updateTab } = tabsActions;
+export { windowsSelector } from "./selectors";

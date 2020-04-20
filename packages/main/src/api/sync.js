@@ -40,7 +40,6 @@ export const initSync = (dispatch) => {
     addTab(tab);
   };
   const handleUpdatedTab = (tabId, changeInfo, tab) => {
-    console.log("update", changeInfo, tab);
     updateTab(tab);
   };
   const handleMovedTab = (tabId, { fromIndex, toIndex, windowId }) => {
