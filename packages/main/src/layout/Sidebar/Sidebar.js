@@ -14,7 +14,6 @@ export const Sidebar = ({ children, isSidebarOpen }) => {
         height: "100vh",
         top: 6,
         transition: "transform 0.3s ease",
-        border: "1px solid black",
         zIndex: 100,
         color: "textContrast",
         contain: "content",

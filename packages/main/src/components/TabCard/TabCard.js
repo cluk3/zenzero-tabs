@@ -1,6 +1,6 @@
 import React, { memo } from "react";
 import { TabItem, CloseButton, TabFavIcon, TabTitle } from "./TabCard.styles";
-import { focusTab, closeTab } from "api/browser";
+import { focusTab, closeTab, getFaviconUrl } from "api/browser";
 
 // const hoverH =
 export const TabCard = memo(({ tab, isDragging, isOver }) => {
@@ -16,14 +16,7 @@ export const TabCard = memo(({ tab, isDragging, isOver }) => {
           e.stopPropagation();
         }}
       ></CloseButton>
-      <TabFavIcon
-        src={
-          tab.favIconUrl
-            ? tab.favIconUrl
-            : "data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs="
-        }
-        alt="tab favicon"
-      />
+      <TabFavIcon src={getFaviconUrl(tab.url)} alt="tab favicon" />
       <TabTitle>{tab.title}</TabTitle>
     </TabItem>
   );

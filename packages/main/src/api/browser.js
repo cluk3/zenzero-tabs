@@ -23,3 +23,6 @@ export const focusWindow = () => {};
 
 export const getWindows = () =>
   browser.windows.getAll({ populate: true, windowTypes: ["normal"] });
+
+export const getFaviconUrl = (url, size = 32) =>
+  `chrome://favicon/size/${size}/${url || ""}`;

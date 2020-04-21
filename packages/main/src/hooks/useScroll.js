@@ -2,9 +2,7 @@ import { useEffect, useRef } from "react";
 
 import { useRafState } from "react-use";
 
-export const useScroll = () => {
-  const ref = useRef(null);
-
+export const useScroll = (ref) => {
   const [state, setState] = useRafState({
     x: 0,
     y: 0,
@@ -36,5 +34,5 @@ export const useScroll = () => {
     };
   }, [ref, setState]);
 
-  return [ref, state];
+  return state;
 };

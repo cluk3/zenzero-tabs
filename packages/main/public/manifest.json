@@ -9,10 +9,15 @@
   },
   "permissions": [
     "tabs",
-    "storage"
+    "storage",
+    "bookmarks",
+    "chrome://favicon/"
   ],
+  "content_security_policy": "script-src 'self'; object-src 'self'; img-src chrome://favicon;",
   "background": {
-    "scripts": ["background.js"],
+    "scripts": [
+      "background.js"
+    ],
     "persistent": false
   },
   "author": "Luca Campli"

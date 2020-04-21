@@ -1,30 +1,17 @@
 import React, { memo } from "react";
 import { Tree } from "components/Tree";
-import { Box, Flex, Image, Text } from "rebass/styled-components";
+import { Flex, Image, Text } from "rebass/styled-components";
 import { windowsSelector } from "features/tabsSession";
 import { useSelector } from "react-redux";
 import { TabsList } from "components/TabsList";
 import { withTabDragAndDrop } from "hocs/withTabDragAndDrop";
+import { getFaviconUrl } from "api/browser";
 
-import { useScroll } from "hooks";
-import { transform, motion } from "framer-motion";
-
-export const Directory = () => {
+export const Directory = memo(() => {
   const windows = useSelector(windowsSelector);
 
-  const [scrollRef, { yPerc }] = useScroll();
-  const width = transform(yPerc, [0, 1], ["0%", "100%"]);
-
   return (
-    <Box ref={scrollRef} sx={{ overflowY: "scroll", height: "90vh" }}>
-      <motion.div
-        animate={{ width }}
-        style={{
-          backgroundColor: "red",
-          height: "2px",
-          position: "absolute",
-        }}
-      />
+    <>
       {windows.map((w, i) => {
         return (
           <Tree
@@ -46,9 +33,9 @@ export const Directory = () => {
           </Tree>
         );
       })}
-    </Box>
+    </>
   );
-};
+});
 
 const TabEntry = memo(({ tab, isDragging, isOver }) => {
   return (
@@ -64,7 +51,7 @@ const TabEntry = memo(({ tab, isDragging, isOver }) => {
         }}
         width="16px"
         height="16px"
-        src={tab.favIconUrl}
+        src={getFaviconUrl(tab.url, 16)}
       ></Image>
       <Flex ml={2} flexDirection="column" justifyContent="center">
         <Text
@@ -73,6 +60,9 @@ const TabEntry = memo(({ tab, isDragging, isOver }) => {
           sx={{
             flex: "1 0",
             fontWeight: "bold",
+            whiteSpace: "nowrap",
+            overflowX: "hidden",
+            textOverflow: "ellipsis",
           }}
         >
           {tab.title}
@@ -81,6 +71,9 @@ const TabEntry = memo(({ tab, isDragging, isOver }) => {
           sx={{
             flex: "1 0",
             color: "contrast",
+            whiteSpace: "nowrap",
+            overflowX: "hidden",
+            textOverflow: "ellipsis",
           }}
         >
           {tab.url}

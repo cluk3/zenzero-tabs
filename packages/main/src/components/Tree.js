@@ -51,6 +51,9 @@ const Frame = styled.div`
 
 const Title = styled.span`
   vertical-align: middle;
+  white-space: nowrap;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
 `;
 
 const Content = styled(a.div)`
