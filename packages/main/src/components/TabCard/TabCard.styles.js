@@ -2,7 +2,7 @@ import styled from "styled-components";
 import React from "react";
 import { Button, Card } from "rebass/styled-components";
 
-export const TabItem = ({ isDragging, isOver, ...props }) => (
+export const TabItem = ({ isDragging, ...props }) => (
   <Card
     sx={{
       overflow: "hidden",
@@ -13,13 +13,14 @@ export const TabItem = ({ isDragging, isOver, ...props }) => (
       height: "6rem",
       cursor: "pointer",
       position: "relative",
-      opacity: isDragging ? 0.1 : 1,
-      backgroundColor: isOver ? "pink" : "primary",
+      opacity: isDragging ? 0 : 1,
+      backgroundColor: "primary",
       color: "text",
-      transition: "all 0.2s ease-out",
+      transition: "transform, opacity 0.2s ease-out",
       mb: 2,
       contain: "content",
       willChange: "transform",
+      transform: isDragging ? "translateX(-40px)" : "translateX(0)",
 
       ":hover": {
         boxShadow: "cardHover",

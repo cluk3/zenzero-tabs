@@ -1,68 +1,66 @@
-import React, { memo } from "react";
-import { useDrag, useDrop, DragPreviewImage } from "react-dnd";
+import React, { memo, useRef } from "react";
+import { useDrag, useDrop } from "react-dnd";
 import { ItemTypes } from "constants/dnd";
 import { moveTab } from "api/browser";
 import { Box } from "rebass/styled-components";
 import { motion } from "framer-motion";
+import { useDispatch, useSelector } from "react-redux";
+import { startDrag, endDrag } from "features/tabsSession";
+
 const spring = {
   type: "spring",
   damping: 22,
   stiffness: 200,
 };
 
-export const withTabDragAndDrop = (
-  TabComponent,
-  DropInsertionComponent = DropInsertionBox
-) =>
+export const withTabDragAndDrop = (TabComponent) =>
   memo(({ tab, ...props }) => {
-    const [, dragRef, preview] = useDrag({
+    const dispatch = useDispatch();
+    const draggedTab = useSelector((state) => state.drag);
+    const ref = useRef();
+    const [, dragRef] = useDrag({
       item: {
         type: ItemTypes.TAB,
         tabId: tab.id,
         index: props.index,
         windowId: tab.windowId,
       },
-    });
-    const [{ draggedTab, isOver }, drop] = useDrop({
-      accept: ItemTypes.TAB,
-      drop({ tabId }) {
-        if (tabId !== tab.id) {
-          moveTab(tabId, tab.windowId, props.index);
+      begin() {
+        dispatch(
+          startDrag({
+            tabId: tab.id,
+            index: props.index,
+            windowId: tab.windowId,
+          })
+        );
+      },
+      end(tab, monitor) {
+        dispatch(endDrag());
+        if (!monitor.didDrop()) {
+          moveTab(tab.tabId, tab.windowId, tab.index);
         }
       },
-      collect(monitor) {
-        const draggedTab = monitor.getItem() || {};
-        return {
-          draggedTab,
-          isOver: draggedTab.tabId !== tab.id && monitor.isOver(),
-        };
+    });
+    const [, drop] = useDrop({
+      accept: ItemTypes.TAB,
+
+      hover: (...args) => {
+        if (draggedTab.tabId !== tab.id) {
+          moveTab(draggedTab.tabId, tab.windowId, props.index);
+        }
       },
     });
+    dragRef(ref);
+    drop(ref);
     return (
-      <Box ref={(r) => dragRef(drop(r))}>
-        <DragPreviewImage src={tab.favIconUrl} connect={preview} />
-        {isOver &&
-        (props.index < draggedTab.index ||
-          tab.windowId !== draggedTab.windowId) ? (
-          <DropInsertionComponent />
-        ) : null}
+      <Box ref={ref}>
         <motion.div positionTransition={spring}>
           <TabComponent
             isDragging={tab.id === draggedTab.tabId}
             tab={tab}
-            isOver={isOver}
             {...props}
           />
         </motion.div>
-        {isOver &&
-        tab.windowId === draggedTab.windowId &&
-        props.index > draggedTab.index ? (
-          <DropInsertionComponent />
-        ) : null}
       </Box>
     );
   });
-
-const DropInsertionBox = () => (
-  <Box m={2} sx={{ height: "2px", width: "100%", backgroundColor: "violet" }} />
-);

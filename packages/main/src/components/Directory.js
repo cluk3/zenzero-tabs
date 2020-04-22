@@ -37,14 +37,9 @@ export const Directory = memo(() => {
   );
 });
 
-const TabEntry = memo(({ tab, isDragging, isOver }) => {
+export const TabEntry = memo(({ tab, isDragging }) => {
   return (
-    <Flex
-      alignItems="start"
-      my={2}
-      ml={3}
-      sx={{ opacity: isDragging ? 0.1 : 1 }}
-    >
+    <Flex alignItems="start" my={2} ml={3} sx={{ opacity: isDragging ? 1 : 1 }}>
       <Image
         sx={{
           flex: "0 0 16px",
