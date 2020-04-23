@@ -4,7 +4,6 @@ import { TabsList } from "components/TabsList";
 import { Droppable } from "react-beautiful-dnd";
 import { TabCard } from "components/TabCard";
 import { withTabDragAndDrop } from "hocs/withTabDragAndDrop";
-import { useTransition, animated } from "react-spring";
 
 const DraggableTabCard = withTabDragAndDrop(TabCard, "main");
 
@@ -43,18 +42,4 @@ export const WindowItem = ({ isActive, window }) => {
       </Droppable>
     </Flex>
   );
-};
-
-const AnimatedTabList = ({ tabs }) => {
-  const transitions = useTransition(tabs, (item) => item.id, {
-    from: { transform: "translate3d(-40px,0,0)" },
-    enter: { transform: "translate3d(0px,0,0)" },
-    leave: { transform: "translate3d(-40px,0,0)" },
-  });
-
-  return transitions.map(({ item, props, key }, i) => (
-    <animated.div key={key} style={props}>
-      <DraggableTabCard tab={item} index={i} />
-    </animated.div>
-  ));
 };

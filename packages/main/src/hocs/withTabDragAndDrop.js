@@ -1,4 +1,4 @@
-import React, { memo, useRef } from "react";
+import React from "react";
 import ReactDOM from "react-dom";
 import { Draggable } from "react-beautiful-dnd";
 import NaturalDragAnimation from "./NaturalDragAnimation";
