@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useCallback } from "react";
 
 import { Header } from "./layout/Header";
 import { Main } from "./layout/Main";
@@ -7,14 +7,15 @@ import { TabsView } from "./components/TabsView";
 import { GlobalStyle } from "./GlobalStyle";
 import { Flex } from "rebass/styled-components";
 
-import { DndProvider } from "react-dnd";
-import Backend from "react-dnd-html5-backend";
+import { DragDropContext } from "react-beautiful-dnd";
 
 import { useDispatch, useSelector } from "react-redux";
-import { addWindows } from "features/tabsSession";
+import { windowsRetrieved, tabDragEnded } from "features/tabsSession";
 import { initSync } from "api/sync";
-import { getWindows } from "api/browser";
+import { getWindows, moveTab as moveBrowserTab } from "api/browser";
 import { SidebarView } from "components/SidebarView";
+
+import { extractNumericId } from "utils";
 
 function App() {
   const dispatch = useDispatch();
@@ -22,17 +23,37 @@ function App() {
 
   useEffect(() => {
     getWindows().then((windows) => {
-      dispatch(addWindows(windows));
+      dispatch(windowsRetrieved(windows));
     });
     return initSync(dispatch);
   }, [dispatch]);
+
+  const handleDragEnd = useCallback(
+    ({ draggableId, destination, source }) => {
+      if (!destination) return;
+
+      const { droppableId, index } = destination;
+      const destinationWindowId = extractNumericId(droppableId);
+      const sourceWindowId = extractNumericId(source.droppableId);
+
+      if (sourceWindowId === destinationWindowId && index === source.index) {
+        return;
+      }
+      const tabId = extractNumericId(draggableId);
+      dispatch(
+        tabDragEnded({ tabId, sourceWindowId, index, destinationWindowId })
+      );
+      moveBrowserTab(tabId, destinationWindowId, index);
+    },
+    [dispatch]
+  );
 
   return (
     <div className="App">
       <GlobalStyle />
       <Header isSidebarOpen={isSidebarOpen} />
       {/* <Button variant='active' /> */}
-      <DndProvider backend={Backend}>
+      <DragDropContext onDragEnd={handleDragEnd}>
         <Sidebar isSidebarOpen={isSidebarOpen}>
           <Flex p={1}>
             <SidebarView />
@@ -41,7 +62,7 @@ function App() {
         <Main isSidebarOpen={isSidebarOpen}>
           <TabsView />
         </Main>
-      </DndProvider>
+      </DragDropContext>
     </div>
   );
 }

@@ -1,62 +1,66 @@
 import browser from "webextension-polyfill";
 import { bindActionCreators } from "redux";
 import {
-  addWindow,
-  removeWindow,
-  addTab,
-  removeTab,
-  attachTab,
-  detachTab,
-  moveTab,
+  windowCreated,
+  windowRemoved,
+  tabCreated,
+  tabRemoved,
+  tabAttached,
+  tabDetached,
+  tabMoved,
   updateTab,
 } from "features/tabsSession";
 
 const actions = {
-  addWindow,
-  removeWindow,
-  addTab,
-  removeTab,
-  attachTab,
-  detachTab,
-  moveTab,
+  windowCreated,
+  windowRemoved,
+  tabCreated,
+  tabRemoved,
+  tabAttached,
+  tabDetached,
+  tabMoved,
   updateTab,
 };
 export const initSync = (dispatch) => {
   const {
-    addWindow,
-    removeWindow,
-    addTab,
-    removeTab,
-    attachTab,
-    detachTab,
-    moveTab,
+    windowCreated,
+    windowRemoved,
+    tabCreated,
+    tabRemoved,
+    tabAttached,
+    tabDetached,
+    tabMoved,
     updateTab,
   } = bindActionCreators(actions, dispatch);
 
   const handleRemovedTab = (tabId, { isWindowClosing, windowId }) => {
-    removeTab(tabId, windowId);
+    tabRemoved(tabId, windowId);
   };
   const handleCreatedTab = (tab) => {
-    addTab(tab);
+    tabCreated(tab);
   };
   const handleUpdatedTab = (tabId, changeInfo, tab) => {
     updateTab(tab);
   };
   const handleMovedTab = (tabId, { fromIndex, toIndex, windowId }) => {
-    moveTab(tabId, fromIndex, toIndex, windowId);
+    tabMoved({
+      tabId,
+      index: toIndex,
+      windowId,
+    });
   };
   const handleDetachedTab = (tabId, { oldPosition, oldWindowId }) => {
-    detachTab(tabId, oldWindowId);
+    tabDetached(tabId, oldWindowId);
   };
   const handleAttachedTab = (tabId, { newPosition, newWindowId }) => {
-    attachTab(tabId, newWindowId, newPosition);
+    tabAttached(tabId, newWindowId, newPosition);
   };
 
   const handleCreatedWindow = (window) => {
-    addWindow(window);
+    windowCreated(window);
   };
   const handleRemovedWindow = (windowId) => {
-    removeWindow(windowId);
+    windowRemoved(windowId);
   };
 
   browser.tabs.onRemoved.addListener(handleRemovedTab);

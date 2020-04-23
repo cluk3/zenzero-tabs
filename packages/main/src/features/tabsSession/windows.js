@@ -1,73 +1,95 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createReducer } from "@reduxjs/toolkit";
 import {
-  addWindow,
-  removeWindow,
-  addTab,
-  removeTab,
-  attachTab,
-  detachTab,
-  moveTab,
-  addWindows,
+  windowCreated,
+  windowRemoved,
+  tabCreated,
+  tabRemoved,
+  tabAttached,
+  tabDetached,
+  tabMoved,
+  windowsRetrieved,
+  tabDragEnded,
 } from "./commonActions";
 
 import uniq from "ramda/src/uniq";
 import move from "ramda/src/move";
 import { deleteInPlace } from "utils";
 
-// TODO: change to createReducer
-const windowsSlice = createSlice({
-  name: "windows",
-  initialState: {
+const addWindow = (state, window) => {
+  state.byId[window.id] = {
+    ...window,
+    tabs: (window.tabs || []).map((t) => t.id),
+  };
+  state.allIds = uniq([...state.allIds, window.id]);
+};
+
+const insertTab = (tabList, index, tabId) => {
+  tabList.splice(index, 0, tabId);
+};
+
+export const windowsReducer = createReducer(
+  {
     byId: {},
     allIds: [],
   },
-  extraReducers: (builder) => {
-    builder.addCase(addWindow, (state, { payload: window }) => {
-      state.byId[window.id] = {
-        ...window,
-        tabs: (window.tabs || []).map((t) => t.id),
-      };
-      state.allIds = uniq([...state.allIds, window.id]);
+  (builder) => {
+    builder.addCase(windowCreated, (state, { payload: window }) => {
+      addWindow(state, window);
     });
-    builder.addCase(addWindows, (state, { payload: { windows } }) => {
+    builder.addCase(windowsRetrieved, (state, { payload: { windows } }) => {
       windows.forEach((w) => {
-        state.byId[w.id] = {
-          ...w,
-          tabs: (w.tabs || []).map((tab) => tab.id),
-        };
-        state.allIds = uniq([...state.allIds, w.id]);
+        addWindow(state, w);
       });
     });
-    builder.addCase(removeWindow, (state, action) => {
+    builder.addCase(windowRemoved, ({ byId, allIds }, action) => {
       const { windowId } = action.payload;
-      delete state.byId[windowId];
-      deleteInPlace(windowId, state.allIds);
+      delete byId[windowId];
+      deleteInPlace(windowId, allIds);
     });
-    builder.addCase(addTab, (state, action) => {
+    builder.addCase(tabCreated, ({ byId }, action) => {
       const { tab } = action.payload;
-      state.byId[tab.windowId].tabs.push(tab.id);
+      byId[tab.windowId].tabs.push(tab.id);
     });
-    builder.addCase(removeTab, (state, action) => {
+    builder.addCase(tabRemoved, (state, action) => {
       const { windowId, tabId } = action.payload;
       const { tabs } = state.byId[windowId];
       deleteInPlace(tabId, tabs);
     });
-    builder.addCase(attachTab, (state, action) => {
+    builder.addCase(tabAttached, ({ byId }, action) => {
       const { windowId, tabId, position } = action.payload;
-      state.byId[windowId].tabs.splice(position, 0, tabId);
+      // check if the tab has already been attached in store by dnd
+      if (byId[windowId].tabs[position] !== tabId) {
+        insertTab(byId[windowId].tabs, position, tabId);
+      }
     });
-    builder.addCase(detachTab, (state, action) => {
+    builder.addCase(tabDetached, (state, action) => {
       const { windowId, tabId } = action.payload;
       const { tabs } = state.byId[windowId];
       deleteInPlace(tabId, tabs);
     });
-    builder.addCase(moveTab, (state, action) => {
-      const { tabId, fromIndex, toIndex, windowId } = action.payload;
-      const { tabs } = state.byId[windowId];
+    builder.addCase(tabDragEnded, ({ byId }, action) => {
+      const {
+        tabId,
+        sourceWindowId,
+        index,
+        destinationWindowId,
+      } = action.payload;
+      if (sourceWindowId === destinationWindowId) {
+        const { tabs } = byId[destinationWindowId];
 
-      state.byId[windowId].tabs = move(tabs.indexOf(tabId), toIndex, tabs);
+        byId[destinationWindowId].tabs = move(tabs.indexOf(tabId), index, tabs);
+      } else {
+        const { tabs } = byId[sourceWindowId];
+        deleteInPlace(tabId, tabs);
+        insertTab(byId[destinationWindowId].tabs, index, tabId);
+      }
     });
-  },
-});
+    builder.addCase(tabMoved, ({ byId }, action) => {
+      const { tabId, index, windowId } = action.payload;
 
-export const { reducer } = windowsSlice;
+      const { tabs } = byId[windowId];
+
+      byId[windowId].tabs = move(tabs.indexOf(tabId), index, tabs);
+    });
+  }
+);

@@ -13,18 +13,16 @@ export const TabItem = ({ isDragging, ...props }) => (
       height: "6rem",
       cursor: "pointer",
       position: "relative",
-      opacity: isDragging ? 0 : 1,
       backgroundColor: "primary",
       color: "text",
-      transition: "transform, opacity 0.2s ease-out",
+      transition: "transform 0.2s ease-out",
       mb: 2,
       contain: "content",
       willChange: "transform",
-      transform: isDragging ? "translateX(-40px)" : "translateX(0)",
 
       ":hover": {
         boxShadow: "cardHover",
-        transform: "translate3d(1px, 1px, 0)",
+        transform: "translate3d(1px, 1px, 0) ",
       },
     }}
     {...props}

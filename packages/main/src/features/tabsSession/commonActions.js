@@ -1,6 +1,6 @@
 import { createAction } from "@reduxjs/toolkit";
 
-export const addTab = createAction("tabs/addTab", (tab) => {
+export const tabCreated = createAction("tabCreated", (tab) => {
   return {
     payload: {
       tab,
@@ -8,7 +8,7 @@ export const addTab = createAction("tabs/addTab", (tab) => {
   };
 });
 
-export const removeTab = createAction("tabs/removeTab", (tabId, windowId) => {
+export const tabRemoved = createAction("tabRemoved", (tabId, windowId) => {
   return {
     payload: {
       tabId,
@@ -16,21 +16,12 @@ export const removeTab = createAction("tabs/removeTab", (tabId, windowId) => {
     },
   };
 });
-export const moveTab = createAction(
-  "tabs/moveTab",
-  (tabId, fromIndex, toIndex, windowId) => {
-    return {
-      payload: {
-        tabId,
-        fromIndex,
-        toIndex,
-        windowId,
-      },
-    };
-  }
-);
-export const attachTab = createAction(
-  "tabs/attachTab",
+export const tabMoved = createAction("tabMoved");
+
+export const tabDragEnded = createAction("tabDragEnded");
+
+export const tabAttached = createAction(
+  "tabAttached",
   (tabId, windowId, position) => {
     return {
       payload: {
@@ -41,7 +32,7 @@ export const attachTab = createAction(
     };
   }
 );
-export const detachTab = createAction("tabs/detachTab", (tabId, windowId) => {
+export const tabDetached = createAction("tabDetached", (tabId, windowId) => {
   return {
     payload: {
       windowId,
@@ -50,18 +41,15 @@ export const detachTab = createAction("tabs/detachTab", (tabId, windowId) => {
   };
 });
 
-export const addWindow = createAction("windows/addWindow");
-export const addWindows = createAction("windows/addWindows", (windows) => ({
+export const windowCreated = createAction("windowCreated");
+export const windowsRetrieved = createAction("windowsRetrieved", (windows) => ({
   payload: {
     windows,
   },
 }));
 
-export const removeWindow = createAction(
-  "windows/removeWindow",
-  (windowId) => ({
-    payload: {
-      windowId,
-    },
-  })
-);
+export const windowRemoved = createAction("windowRemoved", (windowId) => ({
+  payload: {
+    windowId,
+  },
+}));

@@ -1,66 +1,54 @@
 import React, { memo, useRef } from "react";
-import { useDrag, useDrop } from "react-dnd";
-import { ItemTypes } from "constants/dnd";
-import { moveTab } from "api/browser";
-import { Box } from "rebass/styled-components";
-import { motion } from "framer-motion";
-import { useDispatch, useSelector } from "react-redux";
-import { startDrag, endDrag } from "features/tabsSession";
+import ReactDOM from "react-dom";
+import { Draggable } from "react-beautiful-dnd";
+import NaturalDragAnimation from "./NaturalDragAnimation";
 
-const spring = {
-  type: "spring",
-  damping: 22,
-  stiffness: 200,
-};
+function initPortal() {
+  const portal = document.createElement("div");
+  portal.classList.add("dnd-portal");
 
-export const withTabDragAndDrop = (TabComponent) =>
-  memo(({ tab, ...props }) => {
-    const dispatch = useDispatch();
-    const draggedTab = useSelector((state) => state.drag);
-    const ref = useRef();
-    const [, dragRef] = useDrag({
-      item: {
-        type: ItemTypes.TAB,
-        tabId: tab.id,
-        index: props.index,
-        windowId: tab.windowId,
-      },
-      begin() {
-        dispatch(
-          startDrag({
-            tabId: tab.id,
-            index: props.index,
-            windowId: tab.windowId,
-          })
+  document.body.appendChild(portal);
+  return portal;
+}
+let portal;
+
+export const withTabDragAndDrop = (TabComponent, id) => {
+  if (!portal) {
+    portal = initPortal();
+  }
+  return ({ tab, ...props }) => (
+    <Draggable
+      draggableId={`tab-${id}-${tab.id}`}
+      index={props.index}
+      type="TAB"
+    >
+      {(provided, snapshot) => {
+        const child = (
+          <NaturalDragAnimation
+            style={provided.draggableProps.style}
+            snapshot={snapshot}
+          >
+            {(style) => (
+              <div
+                ref={provided.innerRef}
+                {...provided.draggableProps}
+                {...provided.dragHandleProps}
+                style={style}
+              >
+                <TabComponent
+                  tab={tab}
+                  {...props}
+                  isDragging={snapshot.isDragging}
+                />
+              </div>
+            )}
+          </NaturalDragAnimation>
         );
-      },
-      end(tab, monitor) {
-        dispatch(endDrag());
-        if (!monitor.didDrop()) {
-          moveTab(tab.tabId, tab.windowId, tab.index);
-        }
-      },
-    });
-    const [, drop] = useDrop({
-      accept: ItemTypes.TAB,
 
-      hover: (...args) => {
-        if (draggedTab.tabId !== tab.id) {
-          moveTab(draggedTab.tabId, tab.windowId, props.index);
-        }
-      },
-    });
-    dragRef(ref);
-    drop(ref);
-    return (
-      <Box ref={ref}>
-        <motion.div positionTransition={spring}>
-          <TabComponent
-            isDragging={tab.id === draggedTab.tabId}
-            tab={tab}
-            {...props}
-          />
-        </motion.div>
-      </Box>
-    );
-  });
+        return snapshot.isDragging
+          ? ReactDOM.createPortal(child, portal)
+          : child;
+      }}
+    </Draggable>
+  );
+};

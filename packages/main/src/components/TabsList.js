@@ -10,8 +10,12 @@ const getTabById = createSelector(
   (tabs, ids) => ids.map((id) => tabs.byId[id])
 );
 
-export const TabsList = ({ tabIds, children }) => {
+export const TabsList = React.forwardRef(({ tabIds, children }, ref) => {
   const tabs = useSelector((state) => getTabById(state, tabIds));
 
-  return <Flex flexDirection="column">{children({ tabs })}</Flex>;
-};
+  return (
+    <Flex ref={ref} flexDirection="column">
+      {children({ tabs })}
+    </Flex>
+  );
+});

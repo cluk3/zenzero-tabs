@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 import { TabsList } from "components/TabsList";
 import { withTabDragAndDrop } from "hocs/withTabDragAndDrop";
 import { getFaviconUrl } from "api/browser";
+import { Droppable } from "react-beautiful-dnd";
 
 export const Directory = memo(() => {
   const windows = useSelector(windowsSelector);
@@ -14,23 +15,38 @@ export const Directory = memo(() => {
     <>
       {windows.map((w, i) => {
         return (
-          <Tree
-            key={w.id}
-            name={i === 0 ? "Current Window" : "Window " + i}
-            defaultOpen
-          >
-            <TabsList tabIds={w.tabs}>
-              {({ tabs }) => {
-                return tabs.map((tab, i) => (
-                  <DraggableTabEntry
-                    key={"side" + tab.id}
-                    index={i}
-                    tab={tab}
-                  />
-                ));
-              }}
-            </TabsList>
-          </Tree>
+          <Droppable key={w.id} droppableId={"window-side-" + w.id} type="TAB">
+            {(provided) => {
+              return (
+                <Tree
+                  key={w.id}
+                  name={i === 0 ? "Current Window" : "Window " + i}
+                  defaultOpen
+                >
+                  <TabsList
+                    ref={provided.innerRef}
+                    {...provided.droppableProps}
+                    tabIds={w.tabs}
+                  >
+                    {({ tabs }) => {
+                      return (
+                        <>
+                          {tabs.map((tab, i) => (
+                            <DraggableTabEntry
+                              key={"side" + tab.id}
+                              index={i}
+                              tab={tab}
+                            />
+                          ))}
+                          {provided.placeholder}
+                        </>
+                      );
+                    }}
+                  </TabsList>
+                </Tree>
+              );
+            }}
+          </Droppable>
         );
       })}
     </>
@@ -56,7 +72,7 @@ export const TabEntry = memo(({ tab, isDragging }) => {
             flex: "1 0",
             fontWeight: "bold",
             whiteSpace: "nowrap",
-            overflowX: "hidden",
+            // overflowX: "hidden",
             textOverflow: "ellipsis",
           }}
         >
@@ -67,7 +83,7 @@ export const TabEntry = memo(({ tab, isDragging }) => {
             flex: "1 0",
             color: "contrast",
             whiteSpace: "nowrap",
-            overflowX: "hidden",
+            // overflowX: "hidden",
             textOverflow: "ellipsis",
           }}
         >
@@ -78,4 +94,4 @@ export const TabEntry = memo(({ tab, isDragging }) => {
   );
 });
 
-const DraggableTabEntry = withTabDragAndDrop(TabEntry);
+const DraggableTabEntry = withTabDragAndDrop(TabEntry, "side");

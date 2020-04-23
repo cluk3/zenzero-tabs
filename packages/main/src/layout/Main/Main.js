@@ -1,19 +1,27 @@
 import React from "react";
-import { Flex } from "rebass/styled-components";
+import { Flex, Box } from "rebass/styled-components";
 
 export const Main = ({ children, isSidebarOpen }) => {
   return (
-    <Flex
-      ml={!isSidebarOpen ? 3 : "350px"}
-      mt={6}
-      p={3}
-      sx={{
-        overflowX: "scroll",
-        transition: "margin 0.3s ease",
-        contain: "content",
-      }}
-    >
-      {children}
+    <Flex>
+      <Box
+        width={isSidebarOpen ? "320px" : 0}
+        sx={{
+          transition: "width 0.3s ease",
+          flexShrink: 0,
+        }}
+      ></Box>
+      <Flex
+        ml={3}
+        mt={6}
+        p={3}
+        sx={{
+          overflowX: "scroll",
+          contain: "content",
+        }}
+      >
+        {children}
+      </Flex>
     </Flex>
   );
 };
