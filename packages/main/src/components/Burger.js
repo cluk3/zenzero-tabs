@@ -25,10 +25,12 @@ export const Burger = ({ isCollapsed, toggleCollapsed, size = 40 }) => {
       }}
       onClick={toggleCollapsed}
       onKeyDown={(event) => {
-        if (event.keycode === 13) toggleCollapsed();
+        if (event.keyCode === 13 || event.keyCode === 32) toggleCollapsed();
       }}
       role="button"
-      tabIndex="-1"
+      tabIndex="0"
+      aria-pressed={isCollapsed}
+      aria-label="toggle sidebar"
     >
       <Box
         sx={{

@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback } from "react";
+import React, { useEffect, useCallback, useState } from "react";
 
 import { Header } from "./layout/Header";
 import { Main } from "./layout/Main";
@@ -20,7 +20,21 @@ import { extractNumericId } from "utils";
 function App() {
   const dispatch = useDispatch();
   const isSidebarOpen = useSelector((state) => state.ui.sidebar.isOpen);
+  const [hasPressedTab, setHasPressedTab] = useState(false);
 
+  useEffect(() => {
+    const handleTabPress = function (e) {
+      if (e.which === 9) {
+        /* tab */
+        setHasPressedTab(true);
+        document.body.removeEventListener("keyup", handleTabPress);
+      }
+    };
+    document.body.addEventListener("keyup", handleTabPress);
+    return () => {
+      document.body.removeEventListener("keyup", handleTabPress);
+    };
+  }, []);
   useEffect(() => {
     getWindows().then((windows) => {
       dispatch(windowsRetrieved(windows));
@@ -50,7 +64,7 @@ function App() {
 
   return (
     <div className="App">
-      <GlobalStyle />
+      <GlobalStyle hasPressedTab={hasPressedTab} />
       <Header isSidebarOpen={isSidebarOpen} />
       {/* <Button variant='active' /> */}
       <DragDropContext onDragEnd={handleDragEnd}>

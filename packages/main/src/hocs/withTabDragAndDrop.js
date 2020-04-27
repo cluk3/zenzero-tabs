@@ -2,20 +2,9 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { Draggable } from "react-beautiful-dnd";
 import NaturalDragAnimation from "./NaturalDragAnimation";
-
-function initPortal() {
-  const portal = document.createElement("div");
-  portal.classList.add("dnd-portal");
-
-  document.body.appendChild(portal);
-  return portal;
-}
-let portal;
+import { renderInPortal } from "portal";
 
 export const withTabDragAndDrop = (TabComponent, id) => {
-  if (!portal) {
-    portal = initPortal();
-  }
   return ({ tab, ...props }) => (
     <Draggable
       draggableId={`tab-${id}-${tab.id}`}
@@ -45,9 +34,7 @@ export const withTabDragAndDrop = (TabComponent, id) => {
           </NaturalDragAnimation>
         );
 
-        return snapshot.isDragging
-          ? ReactDOM.createPortal(child, portal)
-          : child;
+        return snapshot.isDragging ? renderInPortal(child) : child;
       }}
     </Draggable>
   );

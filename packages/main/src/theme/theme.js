@@ -47,6 +47,18 @@ export const theme = {
       lineHeight: "23px",
       textDecorationLine: "underline",
     },
+    tabCard: {
+      display: "grid",
+      gridTemplateColumns: "2.4rem auto",
+      gridTemplateRows: "4rem 2rem",
+      boxShadow: "card",
+      borderRadius: "3px",
+      height: "6rem",
+      position: "relative",
+      backgroundColor: "primary",
+      color: "text",
+      contain: "content",
+    },
   },
   text: {
     ...preset.text,
@@ -80,6 +92,12 @@ export const theme = {
       bg: "#F15454",
       boxShadow: "0px 2px 3px rgba(34, 34, 34, 0.6)",
       borderRadius: "18px",
+    },
+    toolbar: {
+      backgroundColor: "transparent",
+      color: "text",
+      p: "2px",
+      cursor: "pointer",
     },
   },
 };

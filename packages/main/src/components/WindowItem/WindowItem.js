@@ -1,5 +1,5 @@
 import React from "react";
-import { Flex, Heading } from "rebass/styled-components";
+import { Flex, Heading, Box } from "rebass/styled-components";
 import { TabsList } from "components/TabsList";
 import { Droppable } from "react-beautiful-dnd";
 import { TabCard } from "components/TabCard";
@@ -8,6 +8,7 @@ import { withTabDragAndDrop } from "hocs/withTabDragAndDrop";
 const DraggableTabCard = withTabDragAndDrop(TabCard, "main");
 
 export const WindowItem = ({ isActive, window }) => {
+  console.error("App rerender");
   return (
     <Flex flexDirection="column" mr={3} sx={{ width: "300px" }}>
       <Heading variant="listTitle">
@@ -26,11 +27,9 @@ export const WindowItem = ({ isActive, window }) => {
                 return (
                   <>
                     {tabs.map((tab, i) => (
-                      <DraggableTabCard
-                        key={"main" + tab.id}
-                        tab={tab}
-                        index={i}
-                      />
+                      <Box mb="2" key={"main" + tab.id}>
+                        <DraggableTabCard tab={tab} index={i} />
+                      </Box>
                     ))}
                     {provided.placeholder}
                   </>

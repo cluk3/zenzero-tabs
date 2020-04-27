@@ -3,7 +3,11 @@ import { Flex, Box } from "rebass/styled-components";
 
 export const Main = ({ children, isSidebarOpen }) => {
   return (
-    <Flex>
+    <Flex
+      sx={{
+        minHeight: "100vh",
+      }}
+    >
       <Box
         width={isSidebarOpen ? "320px" : 0}
         sx={{

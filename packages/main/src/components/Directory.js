@@ -72,7 +72,7 @@ export const TabEntry = memo(({ tab, isDragging }) => {
             flex: "1 0",
             fontWeight: "bold",
             whiteSpace: "nowrap",
-            // overflowX: "hidden",
+            overflow: "hidden",
             textOverflow: "ellipsis",
           }}
         >
@@ -83,7 +83,7 @@ export const TabEntry = memo(({ tab, isDragging }) => {
             flex: "1 0",
             color: "contrast",
             whiteSpace: "nowrap",
-            // overflowX: "hidden",
+            overflow: "hidden",
             textOverflow: "ellipsis",
           }}
         >
