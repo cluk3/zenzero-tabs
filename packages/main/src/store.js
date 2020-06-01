@@ -8,12 +8,13 @@ import { all } from "redux-saga/effects";
 import { tabsReducer, windowsReducer, dragReducer } from "features/tabsSession";
 import { uiReducer } from "features/ui";
 import { watchStateAndActions } from "features/tabsSession/sagas";
+import { watchAppInit } from "features/bookmarks";
 import { composeWithDevTools } from "remote-redux-devtools";
 
 export const setupStore = ({ reducers = {}, preloadedState } = {}) => {
   const composeEnhancers = composeWithDevTools({ realtime: true, port: 8000 });
   function* rootSaga() {
-    yield all([watchStateAndActions()]);
+    yield all([watchStateAndActions(), watchAppInit()]);
   }
 
   const sagaMiddleware = createSagaMiddleware();

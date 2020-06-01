@@ -44,6 +44,7 @@ export const TabCard = memo(({ tab, isDragging }) => {
         transition: "transform 0.2s ease-out",
         willChange: "transform",
         userSelect: isVisible ? "none" : "auto",
+        mb: 2,
 
         ":hover": {
           boxShadow: "cardHover",

@@ -8,7 +8,6 @@ import { withTabDragAndDrop } from "hocs/withTabDragAndDrop";
 const DraggableTabCard = withTabDragAndDrop(TabCard, "main");
 
 export const WindowItem = ({ isActive, window }) => {
-  console.error("App rerender");
   return (
     <Flex flexDirection="column" mr={3} sx={{ width: "300px" }}>
       <Heading variant="listTitle">
@@ -27,9 +26,11 @@ export const WindowItem = ({ isActive, window }) => {
                 return (
                   <>
                     {tabs.map((tab, i) => (
-                      <Box mb="2" key={"main" + tab.id}>
-                        <DraggableTabCard tab={tab} index={i} />
-                      </Box>
+                      <DraggableTabCard
+                        key={"main" + tab.id}
+                        tab={tab}
+                        index={i}
+                      />
                     ))}
                     {provided.placeholder}
                   </>

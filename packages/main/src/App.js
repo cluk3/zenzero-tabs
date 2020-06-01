@@ -1,26 +1,23 @@
-import React, { useEffect, useCallback, useState } from "react";
-
+import { getWindows, moveTab as moveBrowserTab } from "api/browser";
+import { initSync } from "api/sync";
+import { SidebarView } from "components/SidebarView";
+import { tabDragEnded, windowsRetrieved } from "features/tabsSession";
+import React, { useCallback, useEffect, useState } from "react";
+import { DragDropContext } from "react-beautiful-dnd";
+import { useDispatch, useSelector } from "react-redux";
+import { Flex } from "rebass/styled-components";
+import { extractNumericId } from "utils";
+import { TabsView } from "./components/TabsView";
+import { GlobalStyle } from "./GlobalStyle";
 import { Header } from "./layout/Header";
 import { Main } from "./layout/Main";
 import { Sidebar } from "./layout/Sidebar";
-import { TabsView } from "./components/TabsView";
-import { GlobalStyle } from "./GlobalStyle";
-import { Flex } from "rebass/styled-components";
-
-import { DragDropContext } from "react-beautiful-dnd";
-
-import { useDispatch, useSelector } from "react-redux";
-import { windowsRetrieved, tabDragEnded } from "features/tabsSession";
-import { initSync } from "api/sync";
-import { getWindows, moveTab as moveBrowserTab } from "api/browser";
-import { SidebarView } from "components/SidebarView";
-
-import { extractNumericId } from "utils";
 
 function App() {
   const dispatch = useDispatch();
   const isSidebarOpen = useSelector((state) => state.ui.sidebar.isOpen);
   const [hasPressedTab, setHasPressedTab] = useState(false);
+  
 
   useEffect(() => {
     const handleTabPress = function (e) {
@@ -39,6 +36,7 @@ function App() {
     getWindows().then((windows) => {
       dispatch(windowsRetrieved(windows));
     });
+    dispatch({ type: "APP_INIT" });
     return initSync(dispatch);
   }, [dispatch]);
 

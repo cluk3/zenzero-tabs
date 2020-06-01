@@ -26,8 +26,16 @@
     "redux": "^4.0.5",
     "redux-saga": "^1.1.3",
     "remote-redux-devtools": "^0.5.16",
+    "sanctuary": "^3.0.0",
+    "sanctuary-def": "^0.21.1",
     "styled-components": "^5.0.1",
     "styled-sanitize": "^1.1.2",
+    "stylelint": "^13.3.3",
+    "stylelint-config-prettier": "^8.0.1",
+    "stylelint-config-recommended": "^3.0.0",
+    "stylelint-config-standard": "^20.0.0",
+    "stylelint-config-styled-components": "^0.1.1",
+    "stylelint-processor-styled-components": "^1.10.0",
     "webextension-polyfill": "^0.6.0"
   },
   "scripts": {
@@ -36,6 +44,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "link-popup": "ln -s ../../popup/build build/popup",
+    "lint:css": "stylelint \"src/**/*.{js,jsx}\"",
     "watch": "./scripts/watch.js",
     "remotedev": "remotedev --hostname=localhost --port=8000"
   },

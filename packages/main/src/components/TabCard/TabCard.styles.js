@@ -15,6 +15,7 @@ export const TabTitle = styled.div`
   overflow: hidden;
   word-break: break-word;
   -webkit-line-clamp: 3;
+  /* stylelint-disable-next-line property-no-vendor-prefix */
   -webkit-box-orient: vertical;
   place-self: center start;
   line-height: 1.2rem;

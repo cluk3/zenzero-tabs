@@ -40,7 +40,7 @@ export const Tree = memo(({ children, name, style, defaultOpen = false }) => {
 
 const Frame = styled.div`
   position: relative;
-  padding: 4px 0px 0px 0px;
+  padding: 4px 0 0 0;
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow-x: hidden;
