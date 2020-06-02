@@ -12,12 +12,12 @@ import { GlobalStyle } from "./GlobalStyle";
 import { Header } from "./layout/Header";
 import { Main } from "./layout/Main";
 import { Sidebar } from "./layout/Sidebar";
+import { SaveBookmarkModal } from "components/SaveBookmarkModal";
 
 function App() {
   const dispatch = useDispatch();
   const isSidebarOpen = useSelector((state) => state.ui.sidebar.isOpen);
   const [hasPressedTab, setHasPressedTab] = useState(false);
-  
 
   useEffect(() => {
     const handleTabPress = function (e) {
@@ -75,6 +75,7 @@ function App() {
           <TabsView />
         </Main>
       </DragDropContext>
+      <SaveBookmarkModal />
     </div>
   );
 }

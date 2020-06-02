@@ -1,8 +1,8 @@
 import React, { useState, useEffect, memo } from "react";
 import { Tree } from "components/Tree";
 import browser from "webextension-polyfill";
-import { Box, Flex, Image, Text } from "rebass";
-import { getFaviconUrl } from "api/browser";
+import { Box, Flex, Text } from "rebass";
+import { TabFavicon } from "./TabFavicon";
 
 export const Bookmarks = memo(() => {
   const [bookmarks, setBookmarks] = useState(null);
@@ -36,7 +36,7 @@ export const RecursiveTree = ({ bookmark }) => {
           </Tree>
         ) : (
           <Box color="yellow" py={2}>
-            Empty folder
+            {`${bookmark.title}(Empty Folder)`}
           </Box>
         )
       ) : (
@@ -63,14 +63,7 @@ const BookmarkEntry = ({ bookmark, isDragging, isOver }) => {
       ml={3}
       sx={{ opacity: isDragging ? 0.1 : 1 }}
     >
-      <Image
-        sx={{
-          flex: "0 0 16px",
-        }}
-        width="16px"
-        height="16px"
-        src={getFaviconUrl(bookmark.url)}
-      ></Image>
+      <TabFavicon url={bookmark.url}></TabFavicon>
       <Flex ml={2} flexDirection="column" justifyContent="center">
         <Text
           mt="-2px"

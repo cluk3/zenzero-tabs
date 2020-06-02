@@ -1,5 +1,5 @@
 import React from "react";
-import { Flex, Heading, Box } from "rebass/styled-components";
+import { Flex, Heading } from "rebass/styled-components";
 import { TabsList } from "components/TabsList";
 import { Droppable } from "react-beautiful-dnd";
 import { TabCard } from "components/TabCard";

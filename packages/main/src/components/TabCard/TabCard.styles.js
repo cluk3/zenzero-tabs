@@ -1,10 +1,8 @@
 import styled from "styled-components";
+import { TabFavicon } from "components/TabFavicon";
 
-export const TabFavIcon = styled.img`
-  width: 2rem;
-  height: 2rem;
+export const TabFavIcon = styled(TabFavicon)`
   place-self: center center;
-  /* grid-row-start: 2; */
 `;
 
 export const TabTitle = styled.div`

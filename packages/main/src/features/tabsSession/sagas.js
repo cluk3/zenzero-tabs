@@ -2,6 +2,7 @@ import { takeEvery, select, call, take } from "redux-saga/effects";
 import { closeTab } from "api/browser";
 import { tabRemoved } from "features/tabsSession";
 
+// TODO: use WeakMap
 const lock = {};
 export const watchStateAndActions = function* () {
   if (process.env.NODE_ENV === "development") {

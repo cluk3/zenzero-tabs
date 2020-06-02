@@ -2,7 +2,7 @@ import { createReducer } from "@reduxjs/toolkit";
 import {
   removeCategoryFromBookmark,
   addCategoriesToBookmark,
-  addBookmark,
+  saveBookmark,
   removeBookmark,
   hydrateBookmarks,
 } from "./commonActions";
@@ -15,7 +15,7 @@ export const bookmarksReducer = createReducer(
     allIds: [],
   },
   (builder) => {
-    builder.addCase(addBookmark, (state, { payload: bookmark, categories }) => {
+    builder.addCase(saveBookmark, (state, { payload: bookmark, categories }) => {
       state.byId[bookmark.id] = { ...bookmark, categories };
       state.allIds.push(bookmark.id);
     });

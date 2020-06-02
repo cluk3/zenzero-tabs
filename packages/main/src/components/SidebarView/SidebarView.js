@@ -1,9 +1,9 @@
 import React, { useState, memo, useRef } from "react";
-import { Flex, Box, Text } from "rebass/styled-components";
+import { Box } from "rebass/styled-components";
 import { Directory } from "components/Directory";
-import { motion, AnimatePresence, transform } from "framer-motion";
 import { Bookmarks } from "components/Bookmarks";
-
+import { Menu } from "./Menu";
+import { motion, AnimatePresence, transform } from "framer-motion";
 import { useScroll } from "hooks";
 
 export const SidebarView = () => {
@@ -54,6 +54,7 @@ const ScrollBar = ({ scrollRef }) => {
     />
   );
 };
+
 const View = memo(({ currentView, navigateTo }) => {
   const scrollRef = useRef();
   const CurrentView = viewsByState[currentView];
@@ -88,26 +89,6 @@ const View = memo(({ currentView, navigateTo }) => {
     </Box>
   );
 });
-
-const Menu = memo(({ navigateTo }) => (
-  <Flex flexDirection="column">
-    <Text
-      my={4}
-      as="h2"
-      sx={{ cursor: "pointer" }}
-      onClick={() => navigateTo("session")}
-    >
-      Session
-    </Text>
-    <Text
-      as="h2"
-      sx={{ cursor: "pointer" }}
-      onClick={() => navigateTo("bookmarks")}
-    >
-      Bookmarks
-    </Text>
-  </Flex>
-));
 
 const viewsByState = {
   menu: Menu,

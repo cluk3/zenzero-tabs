@@ -1,12 +1,12 @@
 import React, { memo } from "react";
 import { Tree } from "components/Tree";
-import { Flex, Image, Text } from "rebass/styled-components";
+import { Flex, Text } from "rebass/styled-components";
 import { windowsSelector } from "features/tabsSession";
 import { useSelector } from "react-redux";
 import { TabsList } from "components/TabsList";
 import { withTabDragAndDrop } from "hocs/withTabDragAndDrop";
-import { getFaviconUrl } from "api/browser";
 import { Droppable } from "react-beautiful-dnd";
+import { TabFavicon } from "./TabFavicon";
 
 export const Directory = memo(() => {
   const windows = useSelector(windowsSelector);
@@ -56,14 +56,7 @@ export const Directory = memo(() => {
 export const TabEntry = memo(({ tab, isDragging }) => {
   return (
     <Flex alignItems="start" my={2} ml={3} sx={{ opacity: isDragging ? 1 : 1 }}>
-      <Image
-        sx={{
-          flex: "0 0 16px",
-        }}
-        width="16px"
-        height="16px"
-        src={getFaviconUrl(tab.url, 16)}
-      ></Image>
+      <TabFavicon url={tab.url}></TabFavicon>
       <Flex ml={2} flexDirection="column" justifyContent="center">
         <Text
           mt="-2px"

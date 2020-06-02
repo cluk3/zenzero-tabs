@@ -1,12 +1,13 @@
 import React, { memo, useState, useCallback } from "react";
 import { TabFavIcon, TabTitle } from "./TabCard.styles";
-import { focusTab, getFaviconUrl } from "api/browser";
+import { focusTab } from "api/browser";
 import { Toolbar } from "components/Toolbar";
 import { useDispatch, useSelector } from "react-redux";
-import { bookmarkButtonClicked } from "features/bookmarks";
 import useContextMenu from "react-use-context-menu";
 import { Text, Card, Flex, Button } from "rebass/styled-components";
 import { renderInPortal } from "portal";
+import { addBookmarkClicked } from "features/ui";
+import { removeBookmarkClicked } from "features/bookmarks";
 
 export const TabCard = memo(({ tab, isDragging }) => {
   const [
@@ -19,37 +20,33 @@ export const TabCard = memo(({ tab, isDragging }) => {
   const hideMenu = () => setVisible(false);
   const [isHover, setIsHover] = useState(false);
   const dispatch = useDispatch();
-  const isBookmarked_ = useSelector((state) => false); //!!state.bookmarks.byUrl[tabUrl]
-  const [isBookmarked, setisBookmarked] = useState(false);
+  const isBookmarked = useSelector((state) => state.bookmarks.byId[tab.url]);
+
   const handleCloseClick = useCallback(
     (e) => {
       dispatch({ type: "CLOSE_TAB_CLICKED", payload: { tabId: tab.id } });
       e.stopPropagation();
     },
-    [tab.id]
+    [tab.id, dispatch]
   );
   const handleBookmarkClick = useCallback(
     (e) => {
-      // dispatch(bookmarkButtonClicked(tab.id, isBookmarked));
-      setisBookmarked((b) => !b);
+      dispatch(
+        isBookmarked
+          ? removeBookmarkClicked(tab.id)
+          : addBookmarkClicked(tab.id)
+      );
       e.stopPropagation();
     },
-    [tab.id, dispatch, setisBookmarked]
+    [tab.id, dispatch, isBookmarked]
   );
   return (
     <Card
       variant="tabCard"
       sx={{
         overflow: "hidden",
-        transition: "transform 0.2s ease-out",
-        willChange: "transform",
         userSelect: isVisible ? "none" : "auto",
         mb: 2,
-
-        ":hover": {
-          boxShadow: "cardHover",
-          transform: "translate3d(1px, 1px, 0) ",
-        },
       }}
       onContextMenu={onContextMenu}
       onMouseOver={() => setIsHover(true)}
@@ -57,7 +54,7 @@ export const TabCard = memo(({ tab, isDragging }) => {
       onClick={() => focusTab(tab)}
       isDragging={isDragging}
     >
-      <TabFavIcon src={getFaviconUrl(tab.url)} alt="tab favicon" />
+      <TabFavIcon url={tab.url} size={2} />
       <TabTitle>{tab.title}</TabTitle>
       <Flex
         alignItems="center"

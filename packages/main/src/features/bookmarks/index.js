@@ -6,7 +6,8 @@ export {
   removeBookmark,
   hydrateBookmarks,
   removeCategoryFromBookmark,
+  saveBookmark,
 } from "./commonActions";
 export { categoriesReducer } from "./categories";
 export { bookmarksReducer } from "./bookmarks";
-export {watchAppInit} from './sagas'
+export { watchAppInit } from "./sagas";
