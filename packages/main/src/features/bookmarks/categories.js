@@ -49,12 +49,9 @@ export const categoriesReducer = createReducer(
         });
       }
     );
-    builder.addCase(
-      hydrateBookmarks,
-      ({ byId, allIds }, { payload: { categories } }) => {
-        allIds.push(categories.allIds);
-        byId = { ...categories.byId };
-      }
-    );
+    builder.addCase(hydrateBookmarks, (state, { payload: { categories } }) => {
+      state.allIds.push(categories.allIds);
+      state.byId = { ...categories.byId };
+    });
   }
 );

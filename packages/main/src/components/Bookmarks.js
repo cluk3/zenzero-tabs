@@ -9,7 +9,6 @@ export const Bookmarks = memo(() => {
   useEffect(() => {
     browser.bookmarks.getTree().then((t) => setBookmarks(t[0]));
   }, []);
-  console.debug("bookmarks", bookmarks);
   return (
     <>
       {bookmarks ? (

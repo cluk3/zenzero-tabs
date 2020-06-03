@@ -15,10 +15,13 @@ export const bookmarksReducer = createReducer(
     allIds: [],
   },
   (builder) => {
-    builder.addCase(saveBookmark, (state, { payload: bookmark, categories }) => {
-      state.byId[bookmark.id] = { ...bookmark, categories };
-      state.allIds.push(bookmark.id);
-    });
+    builder.addCase(
+      saveBookmark,
+      (state, { payload: bookmark, categories }) => {
+        state.byId[bookmark.id] = { ...bookmark, categories };
+        state.allIds.push(bookmark.id);
+      }
+    );
     builder.addCase(
       removeBookmark,
       ({ byId, allIds }, { payload: { categoryName } }) => {
@@ -38,12 +41,9 @@ export const bookmarksReducer = createReducer(
         deleteInPlace(categoryName, byId[bookmarkId].categories);
       }
     );
-    builder.addCase(
-      hydrateBookmarks,
-      ({ byId, allIds }, { payload: { bookmarks } }) => {
-        allIds.push(bookmarks.allIds);
-        byId = { ...bookmarks.byId };
-      }
-    );
+    builder.addCase(hydrateBookmarks, (state, { payload: { bookmarks } }) => {
+      state.allIds.push(bookmarks.allIds);
+      state.byId = { ...bookmarks.byId };
+    });
   }
 );
