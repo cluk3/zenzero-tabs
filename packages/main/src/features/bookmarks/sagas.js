@@ -1,29 +1,18 @@
-import { call, take, put } from "redux-saga/effects";
-import browser from "webextension-polyfill";
-import { propEq, flatten, concat, mergeDeepWith, is } from "ramda";
-import S from "sanctuary";
-import $ from "sanctuary-def";
-import { hydrateBookmarks } from "./commonActions";
-const APP_BOOKMARKS_FOLDER = "ZenzeroTabs";
-
-const getZenzeroBookmarks = S.pipeK([
-  S.head,
-  S.get(S.is($.Array($.Object)))("children"),
-  S.find(propEq("title", "Other Bookmarks")),
-  S.get(S.is($.Array($.Object)))("children"),
-  S.find(propEq("title", APP_BOOKMARKS_FOLDER)),
-  S.get(S.is($.Array($.Object)))("children"),
-]);
+import { call, take, put, takeEvery } from "redux-saga/effects";
+import {
+  getAppBookmarksFolder,
+  saveBookmark as saveBookmarkInBrowser,
+} from "api/bookmarks";
+import { flatten, concat, mergeDeepWith, is } from "ramda";
+import {
+  hydrateBookmarks,
+  saveBookmarkClicked,
+  saveBookmark,
+} from "./commonActions";
 
 export function* watchAppInit() {
   yield take("APP_INIT");
-  const tree = yield call([browser.bookmarks, "getTree"]);
-  let appBookmarksFolder = S.fromMaybe([])(getZenzeroBookmarks(S.Just(tree)));
-  if (!appBookmarksFolder.length) {
-    appBookmarksFolder = yield call([browser.bookmarks, "create"], {
-      title: APP_BOOKMARKS_FOLDER,
-    });
-  }
+  const appBookmarksFolder = yield call(getAppBookmarksFolder);
 
   const categories = {
     allIds: appBookmarksFolder.map((child) => child.title),
@@ -67,4 +56,14 @@ export function* watchAppInit() {
   };
 
   yield put(hydrateBookmarks({ bookmarks, categories }));
+}
+
+export function* syncBookmarksStateWithBrowser() {
+  yield takeEvery(saveBookmarkClicked, watchSaveBookmarksClicked);
+}
+
+function* watchSaveBookmarksClicked({ payload }) {
+  const { categories, bookmark } = payload;
+  yield call(saveBookmarkInBrowser, categories, bookmark);
+  yield put(saveBookmark(payload));
 }

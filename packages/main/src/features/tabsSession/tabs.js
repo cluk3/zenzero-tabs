@@ -9,8 +9,7 @@ import {
   tabDragEnded,
 } from "./commonActions";
 
-import partition from "ramda/src/partition";
-import uniq from "ramda/src/uniq";
+import { partition, uniq } from "ramda";
 
 const tabsSlice = createSlice({
   name: "tabs",

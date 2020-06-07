@@ -18,7 +18,7 @@ export const bookmarksReducer = createReducer(
     builder.addCase(
       saveBookmark,
       (state, { payload: bookmark, categories }) => {
-        state.byId[bookmark.id] = { ...bookmark, categories };
+        state.byId[bookmark.url] = { ...bookmark, categories };
         state.allIds.push(bookmark.id);
       }
     );
@@ -42,7 +42,7 @@ export const bookmarksReducer = createReducer(
       }
     );
     builder.addCase(hydrateBookmarks, (state, { payload: { bookmarks } }) => {
-      state.allIds.push(bookmarks.allIds);
+      state.allIds.push(...bookmarks.allIds);
       state.byId = { ...bookmarks.byId };
     });
   }

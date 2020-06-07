@@ -9,13 +9,20 @@ import { tabsReducer, windowsReducer, dragReducer } from "features/tabsSession";
 import { categoriesReducer, bookmarksReducer } from "features/bookmarks";
 import { uiReducer } from "features/ui";
 import { watchStateAndActions } from "features/tabsSession/sagas";
-import { watchAppInit } from "features/bookmarks";
+import {
+  watchAppInit,
+  syncBookmarksStateWithBrowser,
+} from "features/bookmarks";
 import { composeWithDevTools } from "remote-redux-devtools";
 
 export const setupStore = ({ reducers = {}, preloadedState } = {}) => {
   const composeEnhancers = composeWithDevTools({ realtime: true, port: 8000 });
   function* rootSaga() {
-    yield all([watchStateAndActions(), watchAppInit()]);
+    yield all([
+      watchStateAndActions(),
+      watchAppInit(),
+      syncBookmarksStateWithBrowser(),
+    ]);
   }
 
   const sagaMiddleware = createSagaMiddleware();

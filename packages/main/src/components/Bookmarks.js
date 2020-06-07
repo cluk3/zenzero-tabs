@@ -53,36 +53,3 @@ export const RecursiveTree = ({ bookmark }) => {
     </Box>
   );
 };
-
-const BookmarkEntry = ({ bookmark, isDragging, isOver }) => {
-  return (
-    <Flex
-      alignItems="start"
-      my={2}
-      ml={3}
-      sx={{ opacity: isDragging ? 0.1 : 1 }}
-    >
-      <TabFavicon url={bookmark.url}></TabFavicon>
-      <Flex ml={2} flexDirection="column" justifyContent="center">
-        <Text
-          mt="-2px"
-          mb="6px"
-          sx={{
-            flex: "1 0",
-            fontWeight: "bold",
-          }}
-        >
-          {tab.title}
-        </Text>
-        <Text
-          sx={{
-            flex: "1 0",
-            color: "contrast",
-          }}
-        >
-          {tab.url}
-        </Text>
-      </Flex>
-    </Flex>
-  );
-};
