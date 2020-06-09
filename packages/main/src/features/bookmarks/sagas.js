@@ -1,22 +1,25 @@
-import { call, take, put, takeEvery } from "redux-saga/effects";
+import { call, take, put, takeEvery, select } from "redux-saga/effects";
 import {
   getAppBookmarksFolder,
   saveBookmark as saveBookmarkInBrowser,
 } from "api/bookmarks";
-import { flatten, concat, mergeDeepWith, is } from "ramda";
+import { closeTab, createNewTab } from "api/browser";
+import { flatten, concat, mergeDeepWithKey } from "ramda";
 import {
   hydrateBookmarks,
   saveBookmarkClicked,
   saveBookmark,
+  openBookmarkInWindow,
 } from "./commonActions";
+import { find, propEq, compose, prop } from "ramda";
 
 export function* watchAppInit() {
   yield take("APP_INIT");
-  const appBookmarksFolder = yield call(getAppBookmarksFolder);
+  const { children: bookmarksFolders } = yield call(getAppBookmarksFolder);
 
   const categories = {
-    allIds: appBookmarksFolder.map((child) => child.title),
-    byId: appBookmarksFolder.reduce(
+    allIds: bookmarksFolders.map((child) => child.title),
+    byId: bookmarksFolders.reduce(
       (byId, child) => ({
         ...byId,
         [child.title]: { bookmarks: child.children.map((b) => b.url) },
@@ -25,7 +28,7 @@ export function* watchAppInit() {
     ),
   };
   const raw = flatten(
-    appBookmarksFolder.map((tag) => {
+    bookmarksFolders.map((tag) => {
       return tag.children.reduce(
         (acc, bookmark) => ({
           ...acc,
@@ -42,14 +45,16 @@ export function* watchAppInit() {
 
   const bookmarks = {
     allIds: [
-      ...appBookmarksFolder.reduce((set, tag) => {
+      ...bookmarksFolders.reduce((set, tag) => {
         tag.children.forEach((b) => set.add(b.url));
         return set;
       }, new Set()),
     ],
     byId: raw.reduce(
-      mergeDeepWith((a, b) => {
-        return is(Number, a) ? Math.min(a, b) : concat(a, b);
+      mergeDeepWithKey((key, a, b) => {
+        if (key === "dateAdded") return Math.min(a, b);
+        if (key === "tags") return concat(a, b);
+        return a;
       }),
       {}
     ),
@@ -58,12 +63,23 @@ export function* watchAppInit() {
   yield put(hydrateBookmarks({ bookmarks, categories }));
 }
 
+const getFocusedWindowId = compose(prop("id"), find(propEq("focused", true)));
+
 export function* syncBookmarksStateWithBrowser() {
   yield takeEvery(saveBookmarkClicked, watchSaveBookmarksClicked);
+  yield takeEvery(openBookmarkInWindow, function* ({ payload: bookmarkUrl }) {
+    const windowId = yield select((state) =>
+      getFocusedWindowId(state.windows.byId)
+    );
+    yield call(createNewTab, { url: bookmarkUrl, active: false, windowId });
+  });
 }
 
 function* watchSaveBookmarksClicked({ payload }) {
-  const { categories, bookmark } = payload;
+  const { categories, bookmark, shouldCloseTab, tabId } = payload;
   yield call(saveBookmarkInBrowser, categories, bookmark);
   yield put(saveBookmark(payload));
+  if (shouldCloseTab) {
+    yield call(closeTab, tabId);
+  }
 }

@@ -4,6 +4,9 @@ import { memoizedThrottle } from "utils";
 export const closeTab = (tabId) => {
   return browser.tabs.remove(tabId);
 };
+export const createNewTab = (opts) => {
+  return browser.tabs.create(opts);
+};
 
 export const focusTab = async ({ id: tabId, windowId }) => {
   await browser.tabs.update(tabId, { active: true });

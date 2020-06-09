@@ -5,6 +5,9 @@ import { Bookmarks } from "components/Bookmarks";
 import { Menu } from "./Menu";
 import { motion, AnimatePresence, transform } from "framer-motion";
 import { useScroll } from "hooks";
+import styled from "styled-components";
+import Button from "@material-ui/core/Button";
+import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 
 export const SidebarView = () => {
   const [currentView, navigateTo] = useState("menu");
@@ -82,7 +85,16 @@ const View = memo(({ currentView, navigateTo }) => {
         ref={scrollRef}
       >
         {currentView !== "menu" && (
-          <h2 onClick={() => navigateTo("menu")}>{"<-- Back to menu"}</h2>
+          <BackToMenu>
+            <Button
+              fullWidth
+              size="large"
+              startIcon={<ArrowBackIcon />}
+              onClick={() => navigateTo("menu")}
+            >
+              Back to menu
+            </Button>
+          </BackToMenu>
         )}
         <CurrentView navigateTo={navigateTo}></CurrentView>
       </motion.div>
@@ -95,3 +107,14 @@ const viewsByState = {
   bookmarks: Bookmarks,
   session: Directory,
 };
+
+const BackToMenu = styled.div`
+  position: sticky;
+  top: 0;
+  z-index: 99;
+  background-color: #444343;
+  cursor: pointer;
+  & .MuiButton-text {
+    color: ${({ theme }) => theme.colors.background};
+  }
+`;

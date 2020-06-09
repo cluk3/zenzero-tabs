@@ -53,9 +53,9 @@ export const Directory = memo(() => {
   );
 });
 
-export const TabEntry = memo(({ tab, isDragging }) => {
+export const TabEntry = memo(({ tab }) => {
   return (
-    <Flex alignItems="start" my={2} ml={3} sx={{ opacity: isDragging ? 1 : 1 }}>
+    <Flex alignItems="start" my={2} ml={3}>
       <TabFavicon url={tab.url}></TabFavicon>
       <Flex ml={2} flexDirection="column" justifyContent="center">
         <Text

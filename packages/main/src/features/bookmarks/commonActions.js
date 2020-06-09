@@ -11,6 +11,8 @@ export const removeCategoryFromBookmark = createAction(
   "removeCategoryFromBookmark"
 );
 
+export const openBookmarkInWindow = createAction("openBookmarkInWindow");
+
 export const addToBookmarksClicked = createAction("addToBookmarksClicked");
 export const removeFromBookmarksClicked = createAction(
   "removeFromBookmarksClicked"

@@ -32,7 +32,11 @@ export const Tree = memo(({ children, name, style, defaultOpen = false }) => {
           height: isOpen && previous === isOpen ? "auto" : height,
         }}
       >
-        <a.div style={{ transform }} {...bind} children={children} />
+        <a.div
+          style={{ transform, overflow: "auto" }}
+          {...bind}
+          children={children}
+        />
       </Content>
     </Frame>
   );

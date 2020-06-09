@@ -17,6 +17,9 @@ import { SaveBookmarkModal } from "components/SaveBookmarkModal";
 function App() {
   const dispatch = useDispatch();
   const isSidebarOpen = useSelector((state) => state.ui.sidebar.isOpen);
+  const bookmarkModalTabId = useSelector(
+    (state) => state.ui.addBookmarkModal.tabId
+  );
   const [hasPressedTab, setHasPressedTab] = useState(false);
 
   useEffect(() => {
@@ -75,7 +78,7 @@ function App() {
           <TabsView />
         </Main>
       </DragDropContext>
-      <SaveBookmarkModal />
+      <SaveBookmarkModal key={bookmarkModalTabId} />
     </div>
   );
 }

@@ -14,7 +14,6 @@ export const uiReducer = createReducer(
       state.sidebar.isOpen = !state.sidebar.isOpen;
     },
     [addBookmarkClicked]: (state, { payload }) => {
-      console.log("payload", payload);
       state.addBookmarkModal.isOpen = true;
       state.addBookmarkModal.tabId = payload;
     },

@@ -1,5 +1,5 @@
 import browser from "webextension-polyfill";
-import { propEq } from "ramda";
+import { propEq, isEmpty } from "ramda";
 import S from "sanctuary";
 import $ from "sanctuary-def";
 
@@ -61,15 +61,14 @@ const getZenzeroBookmarks = S.pipeK([
   S.find(propEq("title", "Other Bookmarks")),
   S.get(S.is($.Array($.Object)))("children"),
   S.find(propEq("title", APP_BOOKMARKS_FOLDER)),
-  S.get(S.is($.Array($.Object)))("children"),
 ]);
 
 export const getAppBookmarksFolder = async () => {
   if (appBookmarksFolder) return appBookmarksFolder;
 
   const tree = await browser.bookmarks.getTree();
-  appBookmarksFolder = S.fromMaybe([])(getZenzeroBookmarks(S.Just(tree)));
-  if (!appBookmarksFolder.length) {
+  appBookmarksFolder = S.fromMaybe({})(getZenzeroBookmarks(S.Just(tree)));
+  if (isEmpty(appBookmarksFolder)) {
     appBookmarksFolder = await browser.bookmarks.create({
       title: APP_BOOKMARKS_FOLDER,
     });
@@ -96,7 +95,9 @@ const getCategoriesFolderId = async (categories) => {
   const appBookmarksFolder = await getAppBookmarksFolder();
   return await Promise.all(
     categories.map(async (category) => {
-      let categoryFolder = appBookmarksFolder.find((x) => x.title === category);
+      let categoryFolder = appBookmarksFolder.children.find(
+        (x) => x.title === category
+      );
       // if category exists, return it
 
       // otherwise create and return

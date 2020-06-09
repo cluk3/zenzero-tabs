@@ -1,55 +1,102 @@
-import React, { useState, useEffect, memo } from "react";
 import { Tree } from "components/Tree";
-import browser from "webextension-polyfill";
-import { Box, Flex, Text } from "rebass";
+import { Flex, Text } from "rebass";
 import { TabFavicon } from "./TabFavicon";
+import { useDispatch, useSelector } from "react-redux";
+import { createSelector } from "@reduxjs/toolkit";
+import React, { useCallback, memo } from "react";
+import { map } from "ramda";
+import { openBookmarkInWindow } from "features/bookmarks";
 
+const getCategoriesFolder = createSelector(
+  ({ categories }) => categories,
+  ({ bookmarks }) => bookmarks.byId,
+  (categories, bookmarks) =>
+    map((categoryId) => {
+      return [
+        categoryId,
+        categories.byId[categoryId].bookmarks.map((bookmarkId) => ({
+          ...bookmarks[bookmarkId],
+          url: bookmarkId,
+        })),
+      ];
+    }, categories.allIds)
+);
 export const Bookmarks = memo(() => {
-  const [bookmarks, setBookmarks] = useState(null);
-  useEffect(() => {
-    browser.bookmarks.getTree().then((t) => setBookmarks(t[0]));
-  }, []);
+  const categories = useSelector(getCategoriesFolder);
+  const dispatch = useDispatch();
+
+  const handleBookmarkClick = useCallback(
+    (bookmarkUrl) => () => {
+      dispatch(openBookmarkInWindow(bookmarkUrl));
+    },
+    [dispatch]
+  );
+
   return (
     <>
-      {bookmarks ? (
+      {categories.length ? (
         <>
-          <RecursiveTree bookmark={bookmarks}></RecursiveTree>
-          <Box height={60} />
+          {categories.map(([categoryName, bookmarks]) => {
+            return (
+              <Tree name={categoryName} key={categoryName}>
+                {bookmarks.map((b) => {
+                  return (
+                    <BookmarkEntry
+                      key={categoryName + b.url}
+                      bookmark={b}
+                      handleBookmarkClick={handleBookmarkClick}
+                    />
+                  );
+                })}
+              </Tree>
+            );
+          })}
         </>
       ) : (
-        <h3>Loading...</h3>
+        <h3>Nothing in here... ¯\_(ツ)_/¯</h3>
       )}
     </>
   );
 });
 
-export const RecursiveTree = ({ bookmark }) => {
+export const BookmarkEntry = memo(({ bookmark, handleBookmarkClick }) => {
   return (
-    <Box sx={{}}>
-      {bookmark.children ? (
-        bookmark.children.length ? (
-          <Tree defaultOpen name={bookmark.title || "Bookmarks"}>
-            {bookmark.children.map((b) => {
-              return <RecursiveTree key={b.id} bookmark={b}></RecursiveTree>;
-            })}
-          </Tree>
-        ) : (
-          <Box color="yellow" py={2}>
-            {`${bookmark.title}(Empty Folder)`}
-          </Box>
-        )
-      ) : (
-        <Box
-          py={2}
+    <Flex
+      alignItems="start"
+      my={2}
+      ml={3}
+      onClick={handleBookmarkClick(bookmark.url)}
+      sx={{
+        cursor: "pointer",
+      }}
+    >
+      <TabFavicon url={bookmark.url}></TabFavicon>
+      <Flex ml={2} flexDirection="column" justifyContent="center">
+        <Text
+          mt="-2px"
+          mb="6px"
           sx={{
+            flex: "1 0",
+            fontWeight: "bold",
             whiteSpace: "nowrap",
-            overflowX: "hidden",
+            overflow: "hidden",
             textOverflow: "ellipsis",
           }}
         >
-          - {bookmark.title}
-        </Box>
-      )}
-    </Box>
+          {bookmark.title}
+        </Text>
+        <Text
+          sx={{
+            flex: "1 0",
+            color: "contrast",
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+          }}
+        >
+          {bookmark.url}
+        </Text>
+      </Flex>
+    </Flex>
   );
-};
+});

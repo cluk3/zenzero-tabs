@@ -8,6 +8,7 @@ export {
   removeCategoryFromBookmark,
   saveBookmark,
   saveBookmarkClicked,
+  openBookmarkInWindow
 } from "./commonActions";
 export { categoriesReducer } from "./categories";
 export { bookmarksReducer } from "./bookmarks";
