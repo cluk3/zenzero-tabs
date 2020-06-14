@@ -11,7 +11,8 @@
     "tabs",
     "storage",
     "bookmarks",
-    "chrome://favicon/"
+    "chrome://favicon/",
+    "contextMenus"
   ],
   "content_security_policy": "script-src 'self'; object-src 'self'; img-src chrome://favicon;",
   "background": {
@@ -20,5 +21,12 @@
     ],
     "persistent": false
   },
+  "content_scripts": [
+    {
+      "matches": ["http://*/*", "https://*/*"],
+      "run_at": "document_idle",
+      "js": ["content.js"]
+    }
+  ],
   "author": "Luca Campli"
 }

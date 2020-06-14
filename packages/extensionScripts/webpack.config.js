@@ -1,10 +1,13 @@
 const path = require("path");
 
 module.exports = {
-  entry: "./src/background.js",
+  entry: {
+    background: "./src/background.js",
+    content: "./src/content.js",
+  },
   output: {
     path: path.resolve(__dirname, "../main/build"),
-    filename: "background.js"
+    filename: "[name].js",
   },
   target: "web",
   module: {
@@ -15,10 +18,10 @@ module.exports = {
         use: {
           loader: "babel-loader",
           options: {
-            presets: ["@babel/preset-env"]
-          }
-        }
-      }
-    ]
-  }
+            presets: ["@babel/preset-env"],
+          },
+        },
+      },
+    ],
+  },
 };

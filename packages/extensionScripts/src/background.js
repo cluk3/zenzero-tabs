@@ -1,21 +1,14 @@
 import browser from "webextension-polyfill";
 
-const updateBadge = tabsNumber => {
-  browser.browserAction.setBadgeText({ text: "" + tabsNumber });
+const updateBadge = async () => {
+  const tabs = await browser.tabs.query({});
+  browser.browserAction.setBadgeText({ text: `${tabs.length}` });
 };
 
 browser.runtime.onInstalled.addListener(() => {});
 
-browser.tabs.onCreated.addListener(async () => {
-  const tabs = await browser.tabs.query({});
-  updateBadge(tabs.length);
-});
-browser.tabs.onRemoved.addListener(async () => {
-  const tabs = await browser.tabs.query({});
-  updateBadge(tabs.length);
-});
+browser.tabs.onCreated.addListener(updateBadge);
+browser.tabs.onRemoved.addListener(updateBadge);
 
-(async () => {
-  const tabs = await browser.tabs.query({});
-  updateBadge(tabs.length);
-})();
+updateBadge();
+
