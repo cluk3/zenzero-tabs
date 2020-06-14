@@ -5,10 +5,11 @@ export {
   addCategoriesToBookmark,
   removeBookmark,
   hydrateBookmarks,
-  removeCategoryFromBookmark,
+  removeCategoriesFromBookmark,
   saveBookmark,
   saveBookmarkClicked,
-  openBookmarkInWindow
+  deleteBookmarkClicked,
+  openBookmarkInWindow,
 } from "./commonActions";
 export { categoriesReducer } from "./categories";
 export { bookmarksReducer } from "./bookmarks";

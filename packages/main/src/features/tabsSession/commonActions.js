@@ -17,8 +17,15 @@ export const tabRemoved = createAction("tabRemoved", (tabId, windowId) => {
   };
 });
 export const tabMoved = createAction("tabMoved");
+export const moveTabToNewWindowClicked = createAction(
+  "moveTabToNewWindowClicked"
+);
+export const closeTabClicked = createAction("closeTabClicked");
 
 export const tabDragEnded = createAction("tabDragEnded");
+
+export const dedupTabsClicked = createAction("dedupTabsClicked");
+export const undoDedupClicked = createAction("undoDedupClicked");
 
 export const tabAttached = createAction(
   "tabAttached",

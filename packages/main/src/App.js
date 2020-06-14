@@ -13,6 +13,7 @@ import { Header } from "./layout/Header";
 import { Main } from "./layout/Main";
 import { Sidebar } from "./layout/Sidebar";
 import { SaveBookmarkModal } from "components/SaveBookmarkModal";
+import { NotificationSnackbar } from "components/NotificationSnackbar";
 
 function App() {
   const dispatch = useDispatch();
@@ -79,6 +80,7 @@ function App() {
         </Main>
       </DragDropContext>
       <SaveBookmarkModal key={bookmarkModalTabId} />
+      <NotificationSnackbar />
     </div>
   );
 }

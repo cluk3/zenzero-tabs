@@ -54,8 +54,8 @@ export const initSync = (dispatch) => {
 };
 
 const APP_BOOKMARKS_FOLDER = "ZenzeroTabs";
-let appBookmarksFolder;
-const getZenzeroBookmarks = S.pipeK([
+
+const safeGetExtensionFolder = S.pipeK([
   S.head,
   S.get(S.is($.Array($.Object)))("children"),
   S.find(propEq("title", "Other Bookmarks")),
@@ -63,27 +63,25 @@ const getZenzeroBookmarks = S.pipeK([
   S.find(propEq("title", APP_BOOKMARKS_FOLDER)),
 ]);
 
-export const getAppBookmarksFolder = async () => {
-  if (appBookmarksFolder) return appBookmarksFolder;
-
+export const getOrCreateExtensionFolder = async () => {
   const tree = await browser.bookmarks.getTree();
-  appBookmarksFolder = S.fromMaybe({})(getZenzeroBookmarks(S.Just(tree)));
-  if (isEmpty(appBookmarksFolder)) {
-    appBookmarksFolder = await browser.bookmarks.create({
+  let extensionFolder = S.fromMaybe({})(safeGetExtensionFolder(S.Just(tree)));
+  if (isEmpty(extensionFolder)) {
+    extensionFolder = await browser.bookmarks.create({
       title: APP_BOOKMARKS_FOLDER,
     });
   }
-  return appBookmarksFolder;
+  return extensionFolder;
 };
 
 export const saveBookmark = async (categories, bookmark) => {
   // get all categories folder id
-  const categoriesFolderId = await getCategoriesFolderId(categories);
+  const categoriesFolders = await getCategoriesFolders(categories);
   // for each category, save the bookmark into it
   return await Promise.all(
-    categoriesFolderId.map(async (folderId) => {
+    categoriesFolders.map(async (folder) => {
       return await browser.bookmarks.create({
-        parentId: folderId,
+        parentId: folder.id,
         title: bookmark.title,
         url: bookmark.url,
       });
@@ -91,11 +89,25 @@ export const saveBookmark = async (categories, bookmark) => {
   );
 };
 
-const getCategoriesFolderId = async (categories) => {
-  const appBookmarksFolder = await getAppBookmarksFolder();
+export const deleteBookmark = async (categories, bookmark) => {
+  // get all categories folder id
+  const categoriesFolders = await getCategoriesFolders(categories);
+  // for each category, save the bookmark into it
+  return await Promise.all(
+    categoriesFolders.map(async (folder) => {
+      const { id: childId } = folder.children.find(
+        (child) => child.url === bookmark.url
+      );
+      return await browser.bookmarks.remove(childId);
+    })
+  );
+};
+
+const getCategoriesFolders = async (categories) => {
+  const extensionFolder = await getOrCreateExtensionFolder();
   return await Promise.all(
     categories.map(async (category) => {
-      let categoryFolder = appBookmarksFolder.children.find(
+      let categoryFolder = extensionFolder.children.find(
         (x) => x.title === category
       );
       // if category exists, return it
@@ -103,12 +115,12 @@ const getCategoriesFolderId = async (categories) => {
       // otherwise create and return
       if (!categoryFolder) {
         categoryFolder = await browser.bookmarks.create({
-          parentId: appBookmarksFolder.id,
+          parentId: extensionFolder.id,
           title: category,
         });
       }
 
-      return categoryFolder.id;
+      return categoryFolder;
     })
   );
 };

@@ -15,8 +15,7 @@ const getCategoriesFolder = createSelector(
       return [
         categoryId,
         categories.byId[categoryId].bookmarks.map((bookmarkId) => ({
-          ...bookmarks[bookmarkId],
-          url: bookmarkId,
+          ...bookmarks[bookmarkId]
         })),
       ];
     }, categories.allIds)

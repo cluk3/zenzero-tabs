@@ -10,6 +10,10 @@ export {
   tabMoved,
   windowsRetrieved,
   tabDragEnded,
+  moveTabToNewWindowClicked,
+  closeTabClicked,
+  dedupTabsClicked,
+  undoDedupClicked,
 } from "./commonActions";
 export { startDrag, endDrag, dragReducer } from "./drag"; // TODO: check if needed
 export { tabsReducer };

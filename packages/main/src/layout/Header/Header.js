@@ -1,6 +1,7 @@
 import React from "react";
 import { Flex, Heading } from "rebass/styled-components";
 import { SidebarToggle } from "./SidebarToggle";
+import { HeaderToolbar } from "components/HeaderToolbar";
 
 export const Header = ({ isSidebarOpen }) => {
   return (
@@ -20,9 +21,10 @@ export const Header = ({ isSidebarOpen }) => {
         }}
       >
         <SidebarToggle isSidebarOpen={isSidebarOpen} />
-        <Heading ml={4} variant="appName">
+        <Heading ml={4} mr={5} variant="appName">
           Zenzero
         </Heading>
+        <HeaderToolbar />
       </Flex>
     </>
   );

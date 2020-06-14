@@ -6,7 +6,7 @@ import {
   saveBookmark,
   removeBookmark,
   hydrateBookmarks,
-  removeCategoryFromBookmark,
+  removeCategoriesFromBookmark,
 } from "./commonActions";
 import { uniq } from "ramda";
 
@@ -31,13 +31,13 @@ export const categoriesReducer = createReducer(
     );
     builder.addCase(
       addCategoriesToBookmark,
-      (state, { payload: { categories, bookmarkId } }) => {
+      (state, { payload: { categories, bookmarkUrl } }) => {
         categories.forEach((categoryName) => {
           if (state.byId[categoryName]) {
-            state.byId[categoryName].bookmarks.push(bookmarkId);
+            state.byId[categoryName].bookmarks.push(bookmarkUrl);
           } else {
             state.byId[categoryName] = {
-              bookmarks: [bookmarkId],
+              bookmarks: [bookmarkUrl],
             };
           }
         });
@@ -60,16 +60,18 @@ export const categoriesReducer = createReducer(
       }
     );
     builder.addCase(
-      removeCategoryFromBookmark,
-      ({ byId }, { payload: { categoryName, bookmarkId } }) => {
-        deleteInPlace(bookmarkId, byId[categoryName].bookmarks);
+      removeCategoriesFromBookmark,
+      ({ byId }, { payload: { categories, bookmarkUrl } }) => {
+        categories.forEach((categoryName) =>
+          deleteInPlace(bookmarkUrl, byId[categoryName].bookmarks)
+        );
       }
     );
     builder.addCase(
       removeBookmark,
-      ({ byId }, { payload: { categories, bookmarkId } }) => {
+      ({ byId }, { payload: { categories, bookmark } }) => {
         categories.forEach((categoryName) => {
-          deleteInPlace(bookmarkId, byId[categoryName].bookmarks);
+          deleteInPlace(bookmark.url, byId[categoryName].bookmarks);
         });
       }
     );

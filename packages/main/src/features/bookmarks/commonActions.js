@@ -6,14 +6,10 @@ export const addCategoriesToBookmark = createAction("addCategoriesToBookmark");
 export const removeBookmark = createAction("removeBookmark");
 export const saveBookmark = createAction("saveBookmark");
 export const saveBookmarkClicked = createAction("saveBookmarkClicked");
+export const deleteBookmarkClicked = createAction("deleteBookmarkClicked");
 export const hydrateBookmarks = createAction("hydrateBookmarks");
-export const removeCategoryFromBookmark = createAction(
-  "removeCategoryFromBookmark"
+export const removeCategoriesFromBookmark = createAction(
+  "removeCategoriesFromBookmark"
 );
 
 export const openBookmarkInWindow = createAction("openBookmarkInWindow");
-
-export const addToBookmarksClicked = createAction("addToBookmarksClicked");
-export const removeFromBookmarksClicked = createAction(
-  "removeFromBookmarksClicked"
-);

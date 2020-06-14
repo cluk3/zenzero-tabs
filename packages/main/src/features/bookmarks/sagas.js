@@ -1,21 +1,39 @@
 import { call, take, put, takeEvery, select } from "redux-saga/effects";
 import {
-  getAppBookmarksFolder,
+  getOrCreateExtensionFolder,
   saveBookmark as saveBookmarkInBrowser,
+  deleteBookmark as deleteBookmarkInBrowser,
 } from "api/bookmarks";
 import { closeTab, createNewTab } from "api/browser";
-import { flatten, concat, mergeDeepWithKey } from "ramda";
+import { flatten, concat, mergeDeepWithKey, isEmpty } from "ramda";
 import {
   hydrateBookmarks,
   saveBookmarkClicked,
+  deleteBookmarkClicked,
   saveBookmark,
+  removeBookmark,
   openBookmarkInWindow,
+  addCategoriesToBookmark,
+  removeCategoriesFromBookmark,
 } from "./commonActions";
 import { find, propEq, compose, prop } from "ramda";
 
 export function* watchAppInit() {
   yield take("APP_INIT");
-  const { children: bookmarksFolders } = yield call(getAppBookmarksFolder);
+
+  chrome.runtime.onMessage.addListener(function (
+    request,
+    sender,
+    sendResponse
+  ) {
+    console.log(
+      sender.tab
+        ? "from a content script:" + sender.tab.url
+        : "from the extension"
+    );
+    console.log(request, sender);
+  });
+  const { children: bookmarksFolders } = yield call(getOrCreateExtensionFolder);
 
   const categories = {
     allIds: bookmarksFolders.map((child) => child.title),
@@ -35,7 +53,8 @@ export function* watchAppInit() {
           [bookmark.url]: {
             title: bookmark.title,
             dateAdded: bookmark.dateAdded,
-            tags: [tag.title],
+            categories: [tag.title],
+            url: bookmark.url,
           },
         }),
         {}
@@ -53,7 +72,7 @@ export function* watchAppInit() {
     byId: raw.reduce(
       mergeDeepWithKey((key, a, b) => {
         if (key === "dateAdded") return Math.min(a, b);
-        if (key === "tags") return concat(a, b);
+        if (key === "categories") return concat(a, b);
         return a;
       }),
       {}
@@ -67,6 +86,7 @@ const getFocusedWindowId = compose(prop("id"), find(propEq("focused", true)));
 
 export function* syncBookmarksStateWithBrowser() {
   yield takeEvery(saveBookmarkClicked, watchSaveBookmarksClicked);
+  yield takeEvery(deleteBookmarkClicked, watchDeleteBookmarkClicked);
   yield takeEvery(openBookmarkInWindow, function* ({ payload: bookmarkUrl }) {
     const windowId = yield select((state) =>
       getFocusedWindowId(state.windows.byId)
@@ -76,10 +96,45 @@ export function* syncBookmarksStateWithBrowser() {
 }
 
 function* watchSaveBookmarksClicked({ payload }) {
-  const { categories, bookmark, shouldCloseTab, tabId } = payload;
-  yield call(saveBookmarkInBrowser, categories, bookmark);
-  yield put(saveBookmark(payload));
+  const { categories, bookmark, shouldCloseTab, tabId, isEdit } = payload;
+  if (isEdit) {
+    yield editBookmark(categories, bookmark);
+  } else {
+    yield call(saveBookmarkInBrowser, categories, bookmark);
+    yield put(saveBookmark({ bookmark, categories: categories }));
+  }
+  //TODO: put at top of the function
   if (shouldCloseTab) {
     yield call(closeTab, tabId);
+  }
+}
+
+function* watchDeleteBookmarkClicked({ payload }) {
+  const { bookmark, shouldCloseTab, tabId, categories } = payload;
+  yield call(deleteBookmarkInBrowser, bookmark, categories);
+  yield put(removeBookmark(payload));
+  if (shouldCloseTab) {
+    yield call(closeTab, tabId);
+  }
+}
+
+function* editBookmark(categories, bookmark) {
+  if (!isEmpty(categories.toAdd)) {
+    yield call(saveBookmarkInBrowser, categories.toAdd, bookmark);
+    yield put(
+      addCategoriesToBookmark({
+        bookmarkUrl: bookmark.url,
+        categories: categories.toAdd,
+      })
+    );
+  }
+  if (!isEmpty(categories.toRemove)) {
+    yield call(deleteBookmarkInBrowser, categories.toRemove, bookmark);
+    yield put(
+      removeCategoriesFromBookmark({
+        bookmarkUrl: bookmark.url,
+        categories: categories.toRemove,
+      })
+    );
   }
 }

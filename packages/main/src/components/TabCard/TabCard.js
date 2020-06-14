@@ -6,8 +6,11 @@ import { useDispatch, useSelector } from "react-redux";
 import useContextMenu from "react-use-context-menu";
 import { Text, Card, Flex, Button } from "rebass/styled-components";
 import { renderInPortal } from "portal";
-import { addBookmarkClicked } from "features/ui";
-import { removeBookmarkClicked } from "features/bookmarks";
+import { addBookmarkClicked, editBookmarksClicked } from "features/ui";
+import {
+  moveTabToNewWindowClicked,
+  closeTabClicked,
+} from "features/tabsSession";
 
 export const TabCard = memo(({ tab, isDragging }) => {
   const [
@@ -24,7 +27,14 @@ export const TabCard = memo(({ tab, isDragging }) => {
 
   const handleCloseClick = useCallback(
     (e) => {
-      dispatch({ type: "CLOSE_TAB_CLICKED", payload: { tabId: tab.id } });
+      dispatch(closeTabClicked(tab.id));
+      e.stopPropagation();
+    },
+    [tab.id, dispatch]
+  );
+  const handleMoveToNewWindow = useCallback(
+    (e) => {
+      dispatch(moveTabToNewWindowClicked(tab.id));
       e.stopPropagation();
     },
     [tab.id, dispatch]
@@ -32,9 +42,7 @@ export const TabCard = memo(({ tab, isDragging }) => {
   const handleBookmarkClick = useCallback(
     (e) => {
       dispatch(
-        isBookmarked
-          ? removeBookmarkClicked(tab.id)
-          : addBookmarkClicked(tab.id)
+        isBookmarked ? editBookmarksClicked(tab.id) : addBookmarkClicked(tab.id)
       );
       e.stopPropagation();
     },
@@ -79,6 +87,7 @@ export const TabCard = memo(({ tab, isDragging }) => {
         handleBookmarkClick={handleBookmarkClick}
         handleCloseClick={handleCloseClick}
         isBookmarked={isBookmarked}
+        handleMoveToNewWindow={handleMoveToNewWindow}
       />
 
       <Menu

@@ -1,10 +1,20 @@
 import React from "react";
-import { Flex, Button } from "rebass/styled-components";
-import { ReactComponent as CloseIcon } from "icons/close-24px.svg";
-import { ReactComponent as BookmarkIcon } from "icons/bookmark.svg";
+import { Flex } from "rebass/styled-components";
+
+import CloseIcon from "@material-ui/icons/Close";
+import OpenInNewIcon from "@material-ui/icons/OpenInNew";
+import BookmarkBorderIcon from "@material-ui/icons/BookmarkBorder";
+import BookmarkIcon from "@material-ui/icons/Bookmark";
+import IconButton from "@material-ui/core/IconButton";
 
 export const Toolbar = React.memo(
-  ({ handleBookmarkClick, handleCloseClick, isParentHover, isBookmarked }) => {
+  ({
+    handleBookmarkClick,
+    handleCloseClick,
+    isParentHover,
+    isBookmarked,
+    handleMoveToNewWindow,
+  }) => {
     return (
       <Flex
         sx={{
@@ -19,39 +29,27 @@ export const Toolbar = React.memo(
           backgroundColor: "hsla(39, 4%, 62%, 0.2)",
         }}
       >
-        <Button
-          variant="toolbar"
-          sx={{
-            transform: "translateY(-5px)",
-            transition: "transform .5s ease",
-            ":hover": {
-              transform: "translateY(-2px)",
-            },
-            polyline: {
-              fill: isBookmarked ? "yellow" : "transparent",
-              transition: "fill 0.3s ease",
-            },
-          }}
-          title={isBookmarked ? "Remove from bookmarks" : "Add to bookmarks"}
-          onClick={handleBookmarkClick}
+        <IconButton
+          onClick={handleMoveToNewWindow}
+          size="small"
+          aria-label="move to new window"
         >
-          <BookmarkIcon />
-        </Button>
-        <Button
-          variant="toolbar"
-          sx={{
-            py: 0,
-            transition: "transform 0.2s ease",
-
-            ":hover": {
-              transform: "scale(1.2)",
-              color: "red",
-            },
-          }}
+          <OpenInNewIcon />
+        </IconButton>
+        <IconButton
+          aria-label={isBookmarked ? "Edit bookmark" : "Add to bookmarks"}
+          onClick={handleBookmarkClick}
+          size="small"
+        >
+          {isBookmarked ? <BookmarkIcon /> : <BookmarkBorderIcon />}
+        </IconButton>
+        <IconButton
+          aria-label="Close Tab"
           onClick={handleCloseClick}
+          size="small"
         >
           <CloseIcon />
-        </Button>
+        </IconButton>
       </Flex>
     );
   }

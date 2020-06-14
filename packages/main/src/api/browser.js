@@ -15,11 +15,17 @@ export const focusTab = async ({ id: tabId, windowId }) => {
 
 export const moveTab = memoizedThrottle(
   (tabId, windowId, index = -1) => {
-    browser.tabs.move(tabId, { windowId, index });
+    return browser.tabs.move(tabId, { windowId, index });
   },
   500,
   { leading: true, trailing: false }
 );
+export const moveTabToNewWindow = async (tabId) => {
+  return browser.windows.create({
+    tabId,
+    state: "minimized",
+  });
+};
 
 export const closeWindow = () => {};
 export const focusWindow = () => {};

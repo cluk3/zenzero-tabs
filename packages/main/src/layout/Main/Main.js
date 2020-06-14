@@ -18,7 +18,8 @@ export const Main = ({ children, isSidebarOpen }) => {
       <Flex
         ml={3}
         mt={6}
-        p={3}
+        py={3}
+        px="2px"
         sx={{
           overflowX: "scroll",
           contain: "content",
